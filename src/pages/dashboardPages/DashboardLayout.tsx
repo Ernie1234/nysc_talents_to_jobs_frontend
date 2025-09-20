@@ -1,15 +1,11 @@
-import { Outlet, useNavigate } from "react-router-dom";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar";
+import { Outlet, } from "react-router-dom";
+import { SidebarInset, SidebarProvider,  } from "../../components/ui/sidebar";
 import Header from "../../components/Header";
 import Asidebar from "../../components/Asidebar";
 
 // A simple dashboard layout component
 export const DashboardLayout = () => {
-  const navigate = useNavigate();
-  const handleLogout = () => {
-    localStorage.removeItem("mock_current_user");
-    navigate('/auth/login');
-  };
+  
 
   return (
     <SidebarProvider>

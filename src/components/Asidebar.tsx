@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { EllipsisIcon, Loader, LogOut } from "lucide-react";
+
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   Sidebar,
@@ -8,30 +7,25 @@ import {
   SidebarContent,
   SidebarGroupContent,
   SidebarGroup,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
   SidebarFooter,
   SidebarRail,
   useSidebar,
 } from "../components/ui/sidebar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Separator } from "./ui/separator";
 import { NavMain } from "./NavMain";
+import { Button } from "./ui/button";
 
 const Asidebar = () => {
 
   const { open } = useSidebar();
 
-  const [isOpen, setIsOpen] = useState(false);
+//   const [isOpen, setIsOpen] = useState(false);
+
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem("mock_current_user");
+    navigate('/auth/login');
+  };
 
   return (
     <>
@@ -60,6 +54,9 @@ const Asidebar = () => {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
+        <SidebarFooter>
+            <Button onClick={handleLogout}>Logout</Button>
+        </SidebarFooter>
         {/* <SidebarFooter className="bg-background">
           <SidebarMenu>
             <SidebarMenuItem>
