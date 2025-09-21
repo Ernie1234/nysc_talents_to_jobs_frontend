@@ -13,6 +13,7 @@ export default function QueryProvider({ children }: QueryProviderProps) {
         defaultOptions: {
           queries: {
             staleTime: 60 * 1000, // 1 minute
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             retry: (failureCount, error: any) => {
               // Don't retry on 4xx errors except 429
               if (
