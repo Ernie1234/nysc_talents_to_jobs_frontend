@@ -219,7 +219,7 @@ Make sure these are set in your `.env` file:
 ```env
 VITE_NODE_ENV=development
 VITE_PUBLIC_API_URL=https://nysc-talent-to-jobs-backend.onrender.com  
-VITE_PUBLIC_API_URL_DEV=http://localhost:5000
+VITE_PUBLIC_API_URL_DEV=http://localhost:8080
 ```
 
 ## 🎉 Success!

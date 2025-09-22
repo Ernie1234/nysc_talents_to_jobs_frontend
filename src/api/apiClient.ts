@@ -28,7 +28,7 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
   withCredentials: true,
-  timeout: 15000, // 15 second timeout
+  timeout: 18080, // 15 second timeout
 });
 
 // Token management
@@ -156,7 +156,7 @@ export const healthCheck = async (): Promise<{
 }> => {
   const response = await axios.get<{ status: string; timestamp: string }>(
     `${API_BASE_URL}/health`,
-    { timeout: 5000 }
+    { timeout: 8080 }
   );
   return response.data;
 };
