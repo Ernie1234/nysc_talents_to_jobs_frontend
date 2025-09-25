@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { useResumeContext } from "@/context/resume-info-provider";
 import { Eye, FileText } from "lucide-react";
-import ResumePreview from "./ResumePreview";
+import ResumePreview from "./resume/ResumePreview";
 
 const PreviewModal = () => {
   const { resumeInfo, isLoading } = useResumeContext();

@@ -1,10 +1,10 @@
 import { useResumeContext } from "@/context/resume-info-provider";
 import { cn } from "@/lib/utils";
-import EducationPreview from "./preview/EducationPreview";
-import PersonalInfo from "./preview/PersonalInfo";
-import SummaryPreview from "./preview/SummaryPreview";
-import ExperiencePreview from "./preview/ExperiencePreview";
-import SkillPreview from "./preview/SkillPreview";
+import EducationPreview from "../preview/EducationPreview";
+import PersonalInfo from "../preview/PersonalInfo";
+import SummaryPreview from "../preview/SummaryPreview";
+import ExperiencePreview from "../preview/ExperiencePreview";
+import SkillPreview from "../preview/SkillPreview";
 
 const ResumePreview = () => {
   const { resumeInfo, isLoading } = useResumeContext();

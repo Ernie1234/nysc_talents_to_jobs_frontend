@@ -9,13 +9,9 @@ const ResumeList = () => {
   return (
     <Fragment>
       {isLoading ? (
-        <div
-          className="
-    flex items-center mx-5"
-        >
+        <div className="flex items-center mx-5">
           <Loader
-            className="animate-spin text-black
-     dark:text-white
+            className="animate-spin text-black dark:text-white
      size-10
      "
           />

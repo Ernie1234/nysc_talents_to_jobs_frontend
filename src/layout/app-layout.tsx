@@ -1,18 +1,23 @@
-import Navbar from "@/components/navbar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 import { Outlet } from "react-router-dom";
-// import EditTransactionDrawer from "@/components/transaction/edit-transaction-drawer";
+import AppHeader from "@/components/AppHeader";
 
 const AppLayout = () => {
   return (
-    <>
-      <div className="min-h-screen pb-10">
-        <Navbar />
-        <main className="w-full max-w-full">
-          <Outlet />
-        </main>
+    // <div classN">
+    <SidebarProvider>
+      <AppSidebar />
+      <div className="w-full">
+        <SidebarInset>
+          <AppHeader />
+          <div className="py-3">
+            <Outlet />
+          </div>
+        </SidebarInset>
       </div>
-      {/* <EditTransactionDrawer /> */}
-    </>
+    </SidebarProvider>
+    // </div>
   );
 };
 

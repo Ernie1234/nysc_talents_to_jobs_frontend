@@ -1,7 +1,7 @@
 import { useResumeContext } from "@/context/resume-info-provider";
 import { AlertCircle } from "lucide-react";
 import { useCallback } from "react";
-import ResumeTitle from "./ResumeTitle";
+import ResumeTitle from "./resume/ResumeTitle";
 import Download from "./Download";
 import Share from "./Share";
 import MoreOption from "./MoreOption";

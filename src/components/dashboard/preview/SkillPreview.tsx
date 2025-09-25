@@ -1,6 +1,6 @@
 import { INITIAL_THEME_COLOR } from "@/lib/helpers";
 import type { ResumeDataType } from "@/types/resume-type";
-import React, { type FC } from "react";
+import { type FC } from "react";
 import SkeletonLoader from ".";
 
 interface PropsType {

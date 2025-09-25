@@ -3,11 +3,11 @@ import { useResumeContext } from "@/context/resume-info-provider";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-import PersonalInfoForm from "./form/PersonalInfoForm";
-import SummaryForm from "./form/SummaryForm";
-import ExperienceForm from "./form/ExperienceForm";
-import EducationForm from "./form/EducationForm";
-import SkillsForm from "./form/SkillsForm";
+import PersonalInfoForm from "../form/PersonalInfoForm";
+import SummaryForm from "../form/SummaryForm";
+import ExperienceForm from "../form/ExperienceForm";
+import EducationForm from "../form/EducationForm";
+import SkillsForm from "../form/SkillsForm";
 
 const ResumeForm = () => {
   const { resumeInfo } = useResumeContext();

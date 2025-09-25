@@ -1,5 +1,5 @@
-import ResumeForm from "@/components/dashboard/ResumeForm";
-import ResumePreview from "@/components/dashboard/ResumePreview";
+import ResumeForm from "@/components/dashboard/resume/ResumeForm";
+import ResumePreview from "@/components/dashboard/resume/ResumePreview";
 import TopSection from "@/components/dashboard/TopSection";
 import { ResumeInfoProvider } from "@/context/resume-info-provider";
 

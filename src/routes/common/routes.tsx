@@ -13,6 +13,7 @@ import Appearance from "@/pages/settings/Appearance";
 import HomePage from "@/pages/home/HomePage";
 import { ResumePage } from "@/pages/dashboard/ResumePage";
 import DocumentEditPage from "@/pages/dashboard/DocumentEditPage";
+import FindWorkPage from "@/pages/dashboard/FindWorkPage";
 
 export const publicRoutePaths = [
   {
@@ -44,6 +45,11 @@ export const protectedRoutePaths = [
         element: <DocumentEditPage />,
       },
     ],
+  },
+
+  {
+    path: PROTECTED_ROUTES.FIND_WORK,
+    element: <FindWorkPage />,
   },
   {
     path: PROTECTED_ROUTES.SETTINGS,

@@ -21,6 +21,7 @@ export const AUTH_ROUTES = {
 
 export const PROTECTED_ROUTES = {
   DASHBOARD: "/dashboard",
+  FIND_WORK: "/find-work",
   RESUME: "/dashboard/resume",
   EDIT_RESUME: "/dashboard/resume/:documentId/edit",
   SETTINGS: "/settings",

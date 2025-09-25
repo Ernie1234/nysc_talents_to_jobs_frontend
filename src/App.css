@@ -1,3 +1,23 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+
+@theme {
+  /* Define font families for Tailwind utilities */
+  --font-alan: "Alan Sans", sans-serif;
+  --font-dm: "DM Sans", sans-serif;
+  --font-nunito: "Nunito Sans", sans-serif;
+  --font-open: "Open Sans", sans-serif;
+  --font-raleway: "Raleway", sans-serif;
+
+  /* Set default font family */
+  --font-sans: var(--font-open);
+}
+
+/* Apply default font to body */
+body {
+  font-family: var(--font-sans);
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
