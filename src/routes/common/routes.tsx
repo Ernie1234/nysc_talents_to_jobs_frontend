@@ -11,6 +11,8 @@ import Account from "@/pages/settings/Account";
 import Billing from "@/pages/settings/Billing";
 import Appearance from "@/pages/settings/Appearance";
 import HomePage from "@/pages/home/HomePage";
+import { ResumePage } from "@/pages/dashboard/ResumePage";
+import DocumentEditPage from "@/pages/dashboard/DocumentEditPage";
 
 export const publicRoutePaths = [
   {
@@ -32,6 +34,14 @@ export const protectedRoutePaths = [
       {
         index: true,
         element: <Dashboard />,
+      },
+      {
+        path: PROTECTED_ROUTES.RESUME,
+        element: <ResumePage />,
+      },
+      {
+        path: PROTECTED_ROUTES.EDIT_RESUME,
+        element: <DocumentEditPage />,
       },
     ],
   },
