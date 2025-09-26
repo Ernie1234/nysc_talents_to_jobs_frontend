@@ -23,7 +23,14 @@ levels: fresher, mid, and experienced. Each summary should be limited to 3 to 4 
 reflecting a personal tone and showcasing specific relevant programming languages, technologies,
 frameworks, and methodologies without any placeholders or gaps. Ensure that the summaries are
 engaging and tailored to highlight unique strengths, aspirations, and contributions to collaborative
-projects, demonstrating a clear understanding of the role and industry standards.`;
+projects, demonstrating a clear understanding of the role and industry standards.
+
+Return the response in valid JSON format only, like this:
+{
+  "fresher": "summary text here",
+  "mid": "summary text here", 
+  "experienced": "summary text here"
+}`;
 
 const SummaryForm = (props: { handleNext: () => void }) => {
   const { handleNext } = props;
@@ -62,37 +69,104 @@ const SummaryForm = (props: { handleNext: () => void }) => {
         },
         {
           onSuccess: () => {
-            toast("Success", {
-              description: "Summary updated successfully",
-            });
+            toast.success("Summary updated successfully");
             handleNext();
           },
-          onError() {
-            toast("Error", {
-              description: "Failed to update summary",
-            });
+          onError: () => {
+            toast.error("Failed to update summary");
           },
         }
       );
     },
-    [resumeInfo]
+    [resumeInfo, mutateAsync, handleNext]
   );
 
   const GenerateSummaryFromAI = async () => {
     try {
       const jobTitle = resumeInfo?.personalInfo?.jobTitle;
-      if (!jobTitle) return;
+
+      if (!jobTitle) {
+        toast.error("Job title is required", {
+          description: "Please set your job title first",
+        });
+        return;
+      }
+
+      if (!jobTitle.trim()) {
+        toast.error("Job title is empty", {
+          description: "Please enter a valid job title",
+        });
+        return;
+      }
+
       setLoading(true);
+
       const PROMPT = prompt.replace("{jobTitle}", jobTitle);
+
+      console.log("Sending request to Gemini API...");
+
       const result = await AIChatSession.sendMessage(PROMPT);
+
+      if (!result || !result.response) {
+        throw new Error("No response from AI service");
+      }
+
       const responseText = await result.response.text();
-      console.log(responseText);
-      setAiGeneratedSummary(JSON?.parse(responseText));
-    } catch (error) {
-      toast.error("Failed to generate summary", {
+      console.log("Raw AI response:", responseText);
+
+      // Clean the response text
+      const cleanedText = responseText.replace(/```json|```/g, "").trim();
+
+      try {
+        const parsedResponse = JSON.parse(cleanedText) as GeneratesSummaryType;
+
+        // Validate the response structure
+        if (
+          parsedResponse.fresher &&
+          parsedResponse.mid &&
+          parsedResponse.experienced
+        ) {
+          setAiGeneratedSummary(parsedResponse);
+          toast.success("AI summary generated successfully");
+        } else {
+          throw new Error("Invalid response format from AI");
+        }
+      } catch (parseError) {
+        console.error("JSON parsing error:", parseError);
+        // Fallback: try to extract JSON from malformed response
+        const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsedResponse = JSON.parse(
+            jsonMatch[0]
+          ) as GeneratesSummaryType;
+          setAiGeneratedSummary(parsedResponse);
+          toast.success("AI summary generated successfully");
+        } else {
+          throw new Error("Failed to parse AI response as JSON");
+        }
+      }
+    } catch (error: any) {
+      console.error("Error generating summary:", error);
+
+      let errorMessage = "Failed to generate summary";
+
+      if (error.message?.includes("API key")) {
+        errorMessage =
+          "Invalid API key. Please check your Gemini API configuration.";
+      } else if (error.message?.includes("quota")) {
+        errorMessage = "API quota exceeded. Please try again later.";
+      } else if (
+        error.message?.includes("network") ||
+        error.message?.includes("fetch")
+      ) {
+        errorMessage = "Network error. Please check your internet connection.";
+      } else if (error.message?.includes("parse")) {
+        errorMessage = "Failed to process AI response. Please try again.";
+      }
+
+      toast.error(errorMessage, {
         description: "Please try again later",
       });
-      console.error("Error generating summary:", error);
     } finally {
       setLoading(false);
     }
@@ -108,6 +182,7 @@ const SummaryForm = (props: { handleNext: () => void }) => {
       };
       onUpdate(updatedInfo);
       setAiGeneratedSummary(null);
+      toast.success("Summary selected");
     },
     [onUpdate, resumeInfo]
   );
@@ -126,41 +201,58 @@ const SummaryForm = (props: { handleNext: () => void }) => {
               variant="outline"
               type="button"
               className="gap-1"
-              disabled={loading || isPending}
-              onClick={() => GenerateSummaryFromAI()}
+              disabled={
+                loading || isPending || !resumeInfo?.personalInfo?.jobTitle
+              }
+              onClick={GenerateSummaryFromAI}
             >
-              <Sparkles size="15px" className="text-purple-500" />
-              Generate with AI
+              {loading ? (
+                <Loader size="15px" className="animate-spin" />
+              ) : (
+                <Sparkles size="15px" className="text-purple-500" />
+              )}
+              {loading ? "Generating..." : "Generate with AI"}
             </Button>
           </div>
+
+          {!resumeInfo?.personalInfo?.jobTitle && (
+            <p className="text-sm text-amber-600 mt-2">
+              Please set your job title first to generate AI summaries.
+            </p>
+          )}
+
           <Textarea
             className="mt-5 min-h-36"
             required
             value={resumeInfo?.summary || ""}
             onChange={handleChange}
+            placeholder="Enter your professional summary or generate one with AI..."
           />
 
+          {loading && (
+            <div className="flex items-center justify-center p-4">
+              <Loader className="animate-spin h-6 w-6 text-purple-500" />
+              <span className="ml-2 text-sm">Generating AI summaries...</span>
+            </div>
+          )}
+
           {aiGeneratedSummary && (
-            <div>
-              <h5 className="font-semibold text-[15px] my-4">Suggestions</h5>
-              {Object?.entries(aiGeneratedSummary)?.map(
+            <div className="mt-6">
+              <h5 className="font-semibold text-[15px] my-4">AI Suggestions</h5>
+              {Object.entries(aiGeneratedSummary).map(
                 ([experienceType, summary], index) => (
                   <Card
-                    role="button"
                     key={index}
-                    className="my-4 bg-primary/5 shadow-none
-                            border-primary/30
-                          "
+                    className="my-4 bg-primary/5 shadow-none border-primary/30 cursor-pointer hover:bg-primary/10 transition-colors"
                     onClick={() => handleSelect(summary)}
                   >
-                    <CardHeader className="py-2">
-                      <CardTitle className="font-semibold text-md">
-                        {experienceType?.charAt(0)?.toUpperCase() +
-                          experienceType?.slice(1)}
+                    <CardHeader className="py-3">
+                      <CardTitle className="font-semibold text-md capitalize">
+                        {experienceType} Level
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="text-sm">
-                      <p>{summary}</p>
+                      <p className="whitespace-pre-line">{summary}</p>
                     </CardContent>
                   </Card>
                 )
@@ -169,16 +261,18 @@ const SummaryForm = (props: { handleNext: () => void }) => {
           )}
 
           <Button
-            className="mt-4"
+            className="mt-6 w-full"
             type="submit"
-            disabled={
-              isPending || loading || resumeInfo?.status === "archived"
-                ? true
-                : false
-            }
+            disabled={isPending || loading || resumeInfo?.status === "archived"}
           >
-            {isPending && <Loader size="15px" className="animate-spin" />}
-            Save Changes
+            {isPending ? (
+              <>
+                <Loader size="15px" className="animate-spin mr-2" />
+                Saving...
+              </>
+            ) : (
+              "Save Changes"
+            )}
           </Button>
         </form>
       </div>

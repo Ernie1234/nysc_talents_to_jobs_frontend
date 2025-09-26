@@ -448,7 +448,7 @@ const FindWorkPage = () => {
         {/* Load More Button (optional) */}
         {filteredJobs.length > 0 && (
           <div className="flex justify-center mt-8">
-            <Button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+            <Button className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/85 transition-colors font-medium">
               Load More Jobs
             </Button>
           </div>

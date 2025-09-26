@@ -205,7 +205,7 @@ const JobCard = ({
   return (
     <Card
       className={`w-full border-border/40 shadow-sm hover:shadow-md transition-shadow cursor-pointer ${
-        isFeatured ? "border-l-4 border-l-blue-500" : ""
+        isFeatured ? "border-l-4 border-l-primary" : ""
       }`}
       onClick={onClick}
     >
@@ -220,7 +220,7 @@ const JobCard = ({
                   className="w-12 h-12 rounded-lg object-cover"
                 />
               ) : (
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/70 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-lg">
                     {companyInitial}
                   </span>
@@ -230,7 +230,7 @@ const JobCard = ({
 
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-lg font-semibold text-foreground">
+                <h3 className="text-lg font-semibold text-foreground font-nunito">
                   {jobTitle}
                 </h3>
                 {isFeatured && (

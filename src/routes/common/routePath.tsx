@@ -23,6 +23,7 @@ export const PROTECTED_ROUTES = {
   DASHBOARD: "/dashboard",
   FIND_WORK: "/find-work",
   RESUME: "/dashboard/resume",
+  APPLICATIONS: "/dashboard/applications",
   EDIT_RESUME: "/dashboard/resume/:documentId/edit",
   SETTINGS: "/settings",
   SETTINGS_ACCOUNT: "/settings/account",

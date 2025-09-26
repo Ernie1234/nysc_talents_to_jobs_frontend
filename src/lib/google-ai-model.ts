@@ -1,6 +1,16 @@
+// lib/google-ai-model.ts
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const apiKey = import.meta.env.VITE_PUBLIC_GEMINI_API_KEY!;
+// Check if API key exists
+const apiKey = import.meta.env.VITE_PUBLIC_GEMINI_API_KEY;
+
+if (!apiKey) {
+  console.error(
+    "Gemini API key is missing. Please check your environment variables."
+  );
+  throw new Error("Gemini API key is not configured");
+}
+
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({

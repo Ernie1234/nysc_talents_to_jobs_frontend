@@ -14,6 +14,7 @@ import HomePage from "@/pages/home/HomePage";
 import { ResumePage } from "@/pages/dashboard/ResumePage";
 import DocumentEditPage from "@/pages/dashboard/DocumentEditPage";
 import FindWorkPage from "@/pages/dashboard/FindWorkPage";
+import ApplicationPage from "@/pages/dashboard/ApplicationPage";
 
 export const publicRoutePaths = [
   {
@@ -43,6 +44,10 @@ export const protectedRoutePaths = [
       {
         path: PROTECTED_ROUTES.EDIT_RESUME,
         element: <DocumentEditPage />,
+      },
+      {
+        path: PROTECTED_ROUTES.APPLICATIONS,
+        element: <ApplicationPage />,
       },
     ],
   },

@@ -13,7 +13,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -35,6 +35,7 @@ import {
 } from "./ui/avatar";
 import { getCapitalizedInitials } from "@/lib/helpers";
 import { Separator } from "./ui/separator";
+import Logo from "./logo";
 
 const items = [
   {
@@ -59,7 +60,7 @@ const items = [
   },
   {
     title: "Settings",
-    url: "#",
+    url: "/settings",
     icon: Settings,
   },
 ];
@@ -69,14 +70,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar variant="floating" {...props}>
-      <SidebarContent>
+      <SidebarHeader className="rounded-t-md bg-white">
+        <div className="flex h-[50px] items-center justify-start w-full px-1">
+          <Logo />
+        </div>
+      </SidebarHeader>
+      <Separator />
+      <SidebarContent className="bg-white">
         <SidebarGroup>
-          <SidebarGroupLabel>COFA</SidebarGroupLabel>
+          {/* <SidebarGroupLabel>COFA</SidebarGroupLabel> */}
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton className="py-5" asChild>
                     <a href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -89,7 +96,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
       <Separator />
-      <SidebarFooter>
+      <SidebarFooter className="bg-white rounded-b-md">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
@@ -115,10 +122,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Link to={`/profile`}>Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <span>Account</span>
+                  <Link to={`/settings/account`}>Account</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <span>Billing</span>
+                  <Link to="/settings">Billing</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <span>Sign out</span>
