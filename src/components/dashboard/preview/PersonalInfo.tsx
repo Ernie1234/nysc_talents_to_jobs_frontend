@@ -1,4 +1,3 @@
-"use client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { INITIAL_THEME_COLOR } from "@/lib/helpers";
 import type { ResumeDataType } from "@/types/resume-type";

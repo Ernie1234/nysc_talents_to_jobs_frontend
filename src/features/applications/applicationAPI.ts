@@ -1,0 +1,87 @@
+// features/application/applicationAPI.ts
+import { apiClient } from "@/app/api-client";
+import type {
+  ApplicationAnalysisResponse,
+  ApplicationQueryParams,
+  ApplicationResponse,
+  ApplicationsResponse,
+  UpdateApplicationInput,
+} from "./application-types";
+
+export const applicationApi = apiClient.injectEndpoints({
+  endpoints: (builder) => ({
+    // Get employer's applications
+    getEmployerApplications: builder.query<
+      ApplicationsResponse,
+      ApplicationQueryParams
+    >({
+      query: (params) => ({
+        url: "/applications/employer",
+        method: "GET",
+        params: {
+          status: params.status,
+          page: params.page || 1,
+          limit: params.limit || 10,
+          search: params.search,
+          jobId: params.jobId,
+        },
+      }),
+      providesTags: ["Applications"],
+    }),
+
+    // Get application analysis
+    getApplicationAnalysis: builder.query<ApplicationAnalysisResponse, void>({
+      query: () => ({
+        url: "/applications/analysis",
+        method: "GET",
+      }),
+      providesTags: ["ApplicationAnalysis", "Applications"],
+    }),
+
+    // Get single application
+    getApplication: builder.query<ApplicationResponse, string>({
+      query: (applicationId) => ({
+        url: `/applications/${applicationId}`,
+        method: "GET",
+      }),
+      providesTags: (result, error, id) => [{ type: "Applications", id }],
+    }),
+
+    // Update application status
+    updateApplication: builder.mutation<
+      ApplicationResponse,
+      { applicationId: string; updates: UpdateApplicationInput }
+    >({
+      query: ({ applicationId, updates }) => ({
+        url: `/applications/${applicationId}`,
+        method: "PUT",
+        body: updates,
+      }),
+      invalidatesTags: (result, error, { applicationId }) => [
+        { type: "Applications", id: applicationId },
+        "Applications",
+        "ApplicationAnalysis",
+      ],
+    }),
+
+    // Withdraw application (for corps members)
+    withdrawApplication: builder.mutation<
+      { success: boolean; message: string },
+      string
+    >({
+      query: (applicationId) => ({
+        url: `/applications/${applicationId}/withdraw`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Applications", "ApplicationAnalysis"],
+    }),
+  }),
+});
+
+export const {
+  useGetEmployerApplicationsQuery,
+  useGetApplicationAnalysisQuery,
+  useGetApplicationQuery,
+  useUpdateApplicationMutation,
+  useWithdrawApplicationMutation,
+} = applicationApi;
