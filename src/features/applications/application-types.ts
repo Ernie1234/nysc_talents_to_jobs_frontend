@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // types/application-types.ts
 export interface IApplicantUser {
   profile: {
@@ -59,7 +60,7 @@ export interface IApplication {
   user?: IApplicantUser;
   job?: IApplicantJob;
   resumeDocument?: IResumeDocument;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   uploadedResume?: any;
   id: string;
 }
@@ -156,3 +157,58 @@ export type ApplicationStatus =
   | "rejected"
   | "accepted"
   | "withdrawn";
+
+export interface UserApplication {
+  id: string;
+  jobId: string;
+  employerId: string;
+  userId: string;
+  documentId?: string;
+  resumeUploadId?: string;
+  status:
+    | "pending"
+    | "under_review"
+    | "shortlisted"
+    | "rejected"
+    | "hired"
+    | "withdrawn";
+  appliedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  reviewedAt?: string;
+  job: {
+    title: string;
+    jobType: string;
+    workLocation: string;
+    companyName?: string;
+    hiringLocation: {
+      type: string;
+      state?: string;
+    };
+    salaryRange?: {
+      min: number;
+      max: number;
+      currency: string;
+      isPublic: boolean;
+    };
+  };
+  employer: {
+    firstName: string;
+    lastName: string;
+    fullName: string;
+    companyName?: string;
+  };
+  resumeDocument?: any;
+  uploadedResume?: any;
+}
+
+export interface UserApplicationsResponse {
+  success: boolean;
+  message: string;
+  data: {
+    applications: UserApplication[];
+    total: number;
+    page: number;
+    totalPages: number;
+  };
+}

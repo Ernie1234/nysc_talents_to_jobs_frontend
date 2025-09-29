@@ -6,6 +6,7 @@ import type {
   ApplicationResponse,
   ApplicationsResponse,
   UpdateApplicationInput,
+  UserApplicationsResponse,
 } from "./application-types";
 
 export const applicationApi = apiClient.injectEndpoints({
@@ -75,6 +76,13 @@ export const applicationApi = apiClient.injectEndpoints({
       }),
       invalidatesTags: ["Applications", "ApplicationAnalysis"],
     }),
+    getUserApplications: builder.query<UserApplicationsResponse, void>({
+      query: () => ({
+        url: "/applications/my-applications",
+        method: "GET",
+      }),
+      providesTags: ["Applications"],
+    }),
   }),
 });
 
@@ -84,4 +92,5 @@ export const {
   useGetApplicationQuery,
   useUpdateApplicationMutation,
   useWithdrawApplicationMutation,
+  useGetUserApplicationsQuery,
 } = applicationApi;
