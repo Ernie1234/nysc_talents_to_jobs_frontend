@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Interface for the Employer object nested within the Job structure.
  */
@@ -9,6 +10,7 @@ export interface IEmployerId {
   role: "employer";
   fullName: string;
   id: string;
+  companyName: string | null;
 }
 
 /**
@@ -168,4 +170,31 @@ export interface AnalysisResponse {
   success: boolean;
   message: string;
   data: EmployerAnalysis;
+}
+export interface ApplyToJobRequest {
+  jobId: string;
+  documentId?: string;
+  resumeUploadId?: string;
+  coverLetter?: string;
+}
+
+export interface Application {
+  _id: string;
+  jobId: string;
+  userId: string;
+  employerId: string;
+  documentId?: string;
+  resumeUploadId?: string;
+  coverLetter?: string;
+  status: "pending" | "under_review" | "shortlisted" | "rejected" | "hired";
+  appliedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  job?: {
+    title: string;
+    companyName: string;
+    status: string;
+  };
+  resumeDocument?: any;
+  uploadedResume?: any;
 }

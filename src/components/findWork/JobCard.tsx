@@ -1,5 +1,5 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
+
 import {
   Building,
   MapPin,
@@ -8,9 +8,14 @@ import {
   Briefcase,
   Star,
   Map,
+  Eye,
 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import ApplyButton from "./ApplyButton.tsx";
 
 interface JobCardProps {
+  jobId: string;
   companyLogo?: string;
   companyInitial?: string;
   jobTitle: string;
@@ -24,10 +29,12 @@ interface JobCardProps {
   jobStyle: string;
   isFeatured?: boolean;
   viewMode?: "list" | "grid";
+  viewCounts: number | null;
   onClick?: () => void;
 }
 
 const JobCard = ({
+  jobId,
   companyLogo,
   companyInitial = "G",
   jobTitle,
@@ -41,8 +48,19 @@ const JobCard = ({
   jobStyle,
   isFeatured = false,
   viewMode = "list",
+  viewCounts,
   onClick,
 }: JobCardProps) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      // Navigate to job details page
+      navigate(`/find-work/${jobId}`);
+    }
+  };
   const getJobTypeColor = (type: string) => {
     switch (type) {
       case "full time":
@@ -94,9 +112,9 @@ const JobCard = ({
     return (
       <Card
         className={`h-full border-border/40 shadow-sm hover:shadow-md transition-shadow cursor-pointer ${
-          isFeatured ? "border-l-4 border-l-blue-500" : ""
+          isFeatured ? "border-l-4 border-l-green-500" : ""
         }`}
-        onClick={onClick}
+        onClick={handleClick}
       >
         <CardContent className="p-4 h-full flex flex-col">
           {/* Header Section */}
@@ -109,7 +127,7 @@ const JobCard = ({
                   className="w-10 h-10 rounded-lg object-cover"
                 />
               ) : (
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-800 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-sm">
                     {companyInitial}
                   </span>
@@ -127,7 +145,7 @@ const JobCard = ({
                     variant="secondary"
                     className="bg-blue-50 text-blue-700 border-blue-200 text-xs px-1 py-0"
                   >
-                    Featured
+                    Popular
                   </Badge>
                 )}
               </div>
@@ -183,18 +201,19 @@ const JobCard = ({
                 <Clock className="h-3 w-3" />
                 <span>{postedTime}</span>
               </div>
+
               <div className="flex items-center gap-1">
                 <Users className="h-3 w-3" />
                 <span>{applicants.toLocaleString()}</span>
               </div>
             </div>
 
-            <Badge
-              variant="outline"
-              className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100 transition-colors text-xs"
-            >
-              Apply
-            </Badge>
+            <ApplyButton
+              jobId={jobId}
+              jobTitle={jobTitle}
+              companyName={companyName}
+              className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100 transition-colors"
+            />
           </div>
         </CardContent>
       </Card>
@@ -207,7 +226,7 @@ const JobCard = ({
       className={`w-full border-border/40 shadow-sm hover:shadow-md transition-shadow cursor-pointer ${
         isFeatured ? "border-l-4 border-l-primary" : ""
       }`}
-      onClick={onClick}
+      onClick={handleClick}
     >
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
@@ -295,6 +314,11 @@ const JobCard = ({
               <span>{postedTime}</span>
             </div>
             <div className="flex items-center gap-1">
+              <Eye className="h-4 w-4" />
+              <span>{viewCounts}</span>
+            </div>
+
+            <div className="flex items-center gap-1">
               <Users className="h-4 w-4" />
               <span>
                 {applicants.toLocaleString()} Applicant
@@ -303,12 +327,12 @@ const JobCard = ({
             </div>
           </div>
 
-          <Badge
-            variant="outline"
+          <ApplyButton
+            jobId={jobId}
+            jobTitle={jobTitle}
+            companyName={companyName}
             className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100 transition-colors"
-          >
-            Apply Now
-          </Badge>
+          />
         </div>
       </CardContent>
     </Card>

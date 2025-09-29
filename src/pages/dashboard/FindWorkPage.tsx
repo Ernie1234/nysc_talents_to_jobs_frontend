@@ -1,183 +1,89 @@
-import JobCard from "@/components/findWork/JobCard";
-import { Search, Filter, List, Grid } from "lucide-react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useMemo } from "react";
+import { Search, Filter, List, Grid } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const jobsData = [
-  {
-    companyInitial: "G",
-    jobTitle: "Quality Assurance",
-    companyName: "Google",
-    location: "Jakarta Pusat",
-    description:
-      "Google LLC is an American multinational technology company that focuses on search engine technology, online advertising, cloud computing, computer software, quantum computing, e-commerce, artificial intelligence, and consumer electronics.",
-    postedTime: "2 Days ago",
-    applicants: 719,
-    jobType: "full time",
-    experienceLevel: "mid-senior level",
-    jobStyle: "onsite",
-    isFeatured: true,
-  },
-  {
-    companyInitial: "M",
-    jobTitle: "Frontend Developer",
-    companyName: "Microsoft",
-    location: "Singapore",
-    description:
-      "Microsoft Corporation is an American multinational technology corporation producing computer software, consumer electronics, personal computers, and related services.",
-    postedTime: "1 Day ago",
-    applicants: 423,
-    jobType: "full time",
-    experienceLevel: "senior level",
-    jobStyle: "remote",
-    isFeatured: true,
-  },
-  {
-    companyInitial: "A",
-    jobTitle: "UX Designer",
-    companyName: "Apple",
-    location: "Tokyo, Japan",
-    description:
-      "Apple Inc. is an American multinational technology company that specializes in consumer electronics, software and online services.",
-    postedTime: "3 Days ago",
-    applicants: 289,
-    jobType: "part time",
-    experienceLevel: "intermediate level",
-    jobStyle: "hybrid",
-    isFeatured: false,
-  },
-  {
-    companyInitial: "F",
-    jobTitle: "Data Scientist",
-    companyName: "Facebook",
-    location: "Seoul, South Korea",
-    description:
-      "Meta Platforms, Inc., doing business as Meta, and formerly named Facebook, Inc., is an American multinational technology conglomerate.",
-    postedTime: "5 Hours ago",
-    applicants: 156,
-    jobType: "full time",
-    experienceLevel: "senior level",
-    jobStyle: "remote",
-    isFeatured: true,
-  },
-  {
-    companyInitial: "N",
-    jobTitle: "DevOps Engineer",
-    companyName: "Netflix",
-    location: "Sydney, Australia",
-    description:
-      "Netflix, Inc. is an American subscription video on-demand over-the-top streaming service and production company.",
-    postedTime: "1 Week ago",
-    applicants: 892,
-    jobType: "contract",
-    experienceLevel: "mid-senior level",
-    jobStyle: "onsite",
-    isFeatured: false,
-  },
-  {
-    companyInitial: "A",
-    jobTitle: "Backend Developer",
-    companyName: "Amazon",
-    location: "Bangalore, India",
-    description:
-      "Amazon.com, Inc. is an American multinational technology company focusing on e-commerce, cloud computing, online advertising, digital streaming, and artificial intelligence.",
-    postedTime: "Just now",
-    applicants: 34,
-    jobType: "full time",
-    experienceLevel: "entry level",
-    jobStyle: "hybrid",
-    isFeatured: true,
-  },
-  {
-    companyInitial: "S",
-    jobTitle: "Full Stack Developer",
-    companyName: "Spotify",
-    location: "Stockholm, Sweden",
-    description:
-      "Spotify Technology S.A. is a Swedish audio streaming and media services provider founded in 2006 by Daniel Ek and Martin Lorentzon.",
-    postedTime: "2 Days ago",
-    applicants: 567,
-    jobType: "part time",
-    experienceLevel: "intermediate level",
-    jobStyle: "remote",
-    isFeatured: false,
-  },
-  {
-    companyInitial: "U",
-    jobTitle: "Product Manager",
-    companyName: "Uber",
-    location: "San Francisco, USA",
-    description:
-      "Uber Technologies, Inc., commonly referred to as Uber, is an American multinational transportation network company.",
-    postedTime: "4 Days ago",
-    applicants: 234,
-    jobType: "full time",
-    experienceLevel: "senior level",
-    jobStyle: "onsite",
-    isFeatured: true,
-  },
-  {
-    companyInitial: "T",
-    jobTitle: "Software Engineer Intern",
-    companyName: "Tesla",
-    location: "Austin, USA",
-    description:
-      "Tesla, Inc. is an American multinational automotive and clean energy company headquartered in Austin, Texas.",
-    postedTime: "1 Day ago",
-    applicants: 189,
-    jobType: "internship",
-    experienceLevel: "intern",
-    jobStyle: "onsite",
-    isFeatured: false,
-  },
-  {
-    companyInitial: "I",
-    jobTitle: "AI Research Scientist",
-    companyName: "IBM",
-    location: "London, UK",
-    description:
-      "International Business Machines Corporation is an American multinational technology company headquartered in Armonk, New York.",
-    postedTime: "3 Days ago",
-    applicants: 76,
-    jobType: "full time",
-    experienceLevel: "senior level",
-    jobStyle: "remote",
-    isFeatured: true,
-  },
-  {
-    companyInitial: "D",
-    jobTitle: "Database Administrator",
-    companyName: "Dropbox",
-    location: "Berlin, Germany",
-    description:
-      "Dropbox, Inc. is an American company that operates Dropbox, a file hosting service offering cloud storage, file synchronization, personal cloud, and client software.",
-    postedTime: "6 Hours ago",
-    applicants: 123,
-    jobType: "contract",
-    experienceLevel: "associate level",
-    jobStyle: "hybrid",
-    isFeatured: false,
-  },
-  {
-    companyInitial: "O",
-    jobTitle: "Mobile Developer",
-    companyName: "Oracle",
-    location: "Toronto, Canada",
-    description:
-      "Oracle Corporation is an American multinational computer technology company headquartered in Austin, Texas.",
-    postedTime: "2 Days ago",
-    applicants: 298,
-    jobType: "full time",
-    experienceLevel: "mid-senior level",
-    jobStyle: "remote",
-    isFeatured: true,
-  },
-];
+import JobCard from "@/components/findWork/JobCard";
+import type { IJob } from "@/features/job/jobTypes";
+import { useGetPublicJobsQuery } from "@/features/job/jobAPI";
 
 type ViewMode = "list" | "grid";
+
+// Map API job data to JobCard props
+const mapJobToCardProps = (job: IJob) => ({
+  jobId: job.id || job.id,
+  companyInitial: job.employerId?.firstName?.charAt(0) || "C",
+  jobTitle: job.title,
+  companyName:
+    job.employerId?.companyName ||
+    `${job.employerId?.firstName} ${job.employerId?.lastName}`,
+  location:
+    job.hiringLocation.type === "state"
+      ? job.hiringLocation.state || "Nationwide"
+      : "Nationwide",
+  description: job.aboutJob,
+  postedTime: getTimeAgo(job.publishedAt || job.createdAt),
+  applicants: job.applicationCount,
+  jobType: mapJobType(job.jobType),
+  experienceLevel: mapExperienceLevel(job.experienceLevel),
+  jobStyle: mapWorkLocation(job.workLocation),
+  isFeatured: job.viewCount > 50,
+  salaryRange: job.salaryRange,
+  skills: job.skills,
+  viewCounts: job.viewCount,
+});
+
+// Helper functions
+const getTimeAgo = (dateString: string): string => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInMs = now.getTime() - date.getTime();
+  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  if (diffInHours < 1) return "Just now";
+  if (diffInHours < 24) return `${diffInHours}h ago`;
+  if (diffInDays === 1) return "1 day ago";
+  if (diffInDays < 7) return `${diffInDays} days ago`;
+  if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
+  return `${Math.floor(diffInDays / 30)} months ago`;
+};
+
+const mapJobType = (jobType: string): string => {
+  const mapping: { [key: string]: string } = {
+    fulltime: "full time",
+    "part-time": "part time",
+    contract: "contract",
+    freelance: "contract",
+    intern: "internship",
+    "co-founder": "full time",
+  };
+  return mapping[jobType] || jobType;
+};
+
+const mapExperienceLevel = (level: string): string => {
+  const mapping: { [key: string]: string } = {
+    intern: "intern",
+    "entry-level": "entry level",
+    "mid-level": "intermediate level",
+    "senior-level": "senior level",
+    executive: "senior level",
+  };
+  return mapping[level] || level;
+};
+
+const mapWorkLocation = (location: string): string => {
+  const mapping: { [key: string]: string } = {
+    remote: "remote",
+    "on-site": "onsite",
+    hybrid: "hybrid",
+  };
+  return mapping[location] || location;
+};
 
 const FindWorkPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -186,49 +92,114 @@ const FindWorkPage = () => {
   const [filters, setFilters] = useState({
     jobType: [] as string[],
     experienceLevel: [] as string[],
-    jobStyle: [] as string[],
+    workLocation: [] as string[],
   });
+  const [page, setPage] = useState(1);
 
-  // Filter jobs based on search term and all filters
+  // Prepare API parameters based on backend expectations
+  const apiParams = useMemo(() => {
+    const params: any = {
+      page,
+      limit: 12,
+    };
+
+    // Add search if provided
+    if (searchTerm) {
+      params.search = searchTerm;
+    }
+
+    // Add filters - backend expects exact enum values
+    if (filters.jobType.length > 0) {
+      // Take the first selected job type (or modify backend to accept array)
+      params.jobType = filters.jobType[0];
+    }
+
+    if (filters.experienceLevel.length > 0) {
+      params.experienceLevel = filters.experienceLevel[0];
+    }
+
+    if (filters.workLocation.length > 0) {
+      params.workLocation = filters.workLocation[0];
+    }
+
+    return params;
+  }, [page, searchTerm, filters]);
+
+  // API call with properly mapped parameters
+  const { data: jobsData, isLoading, error } = useGetPublicJobsQuery(apiParams);
+
+  console.log("API Params:", apiParams);
+  console.log("JOBS LIST: ", jobsData);
+
+  const jobs = jobsData?.data?.jobs || [];
+  const totalJobs = jobsData?.data?.total || 0;
+
+  // Filter jobs locally for multiple selections and featured filter
   const filteredJobs = useMemo(() => {
-    return jobsData.filter((job) => {
-      const matchesSearch =
-        job.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.description.toLowerCase().includes(searchTerm.toLowerCase());
+    if (!jobs.length) return [];
 
-      const matchesFeatured = !showFeaturedOnly || job.isFeatured;
+    return jobs.filter((job) => {
+      const mappedJob = mapJobToCardProps(job);
+
+      const matchesFeatured = !showFeaturedOnly || mappedJob.isFeatured;
+
+      // Convert backend values to frontend format for comparison
+      const frontendJobType = mapJobType(job.jobType);
+      const frontendExperienceLevel = mapExperienceLevel(job.experienceLevel);
+      const frontendJobStyle = mapWorkLocation(job.workLocation);
 
       const matchesJobType =
-        filters.jobType.length === 0 || filters.jobType.includes(job.jobType);
+        filters.jobType.length === 0 ||
+        filters.jobType.some(
+          (filterType) => frontendJobType === mapJobType(filterType)
+        );
+
       const matchesExperienceLevel =
         filters.experienceLevel.length === 0 ||
-        filters.experienceLevel.includes(job.experienceLevel);
-      const matchesJobStyle =
-        filters.jobStyle.length === 0 ||
-        filters.jobStyle.includes(job.jobStyle);
+        filters.experienceLevel.some(
+          (filterLevel) =>
+            frontendExperienceLevel === mapExperienceLevel(filterLevel)
+        );
+
+      const matchesWorkLocation =
+        filters.workLocation.length === 0 ||
+        filters.workLocation.some(
+          (filterLocation) =>
+            frontendJobStyle === mapWorkLocation(filterLocation)
+        );
 
       return (
-        matchesSearch &&
         matchesFeatured &&
         matchesJobType &&
         matchesExperienceLevel &&
-        matchesJobStyle
+        matchesWorkLocation
       );
     });
-  }, [searchTerm, showFeaturedOnly, filters]);
+  }, [jobs, showFeaturedOnly, filters]);
 
-  // Filter options
-  const jobTypeOptions = ["full time", "part time", "contract", "internship"];
-  const experienceLevelOptions = [
-    "entry level",
-    "intern",
-    "intermediate level",
-    "mid-senior level",
-    "senior level",
-    "associate level",
+  // Filter options - using backend enum values but displaying user-friendly labels
+  const jobTypeOptions = [
+    { value: "fulltime", label: "Full Time" },
+    { value: "part-time", label: "Part Time" },
+    { value: "contract", label: "Contract" },
+    { value: "freelance", label: "Freelance" },
+    { value: "intern", label: "Internship" },
+    { value: "co-founder", label: "Co-founder" },
   ];
-  const jobStyleOptions = ["onsite", "remote", "hybrid"];
+
+  const experienceLevelOptions = [
+    { value: "intern", label: "Intern" },
+    { value: "entry-level", label: "Entry Level" },
+    { value: "mid-level", label: "Mid Level" },
+    { value: "senior-level", label: "Senior Level" },
+    { value: "executive", label: "Executive" },
+  ];
+
+  const workLocationOptions = [
+    { value: "remote", label: "Remote" },
+    { value: "on-site", label: "On Site" },
+    { value: "hybrid", label: "Hybrid" },
+  ];
 
   const toggleFilter = (category: keyof typeof filters, value: string) => {
     setFilters((prev) => ({
@@ -237,20 +208,75 @@ const FindWorkPage = () => {
         ? prev[category].filter((item) => item !== value)
         : [...prev[category], value],
     }));
+    setPage(1);
   };
 
   const clearFilters = () => {
     setFilters({
       jobType: [],
       experienceLevel: [],
-      jobStyle: [],
+      workLocation: [],
     });
+    setPage(1);
+  };
+
+  const handleSearch = () => {
+    setPage(1);
   };
 
   const hasActiveFilters =
     filters.jobType.length > 0 ||
     filters.experienceLevel.length > 0 ||
-    filters.jobStyle.length > 0;
+    filters.workLocation.length > 0;
+
+  // Get display label for active filters
+  const getFilterLabel = (category: keyof typeof filters, value: string) => {
+    const optionMap: Record<string, Array<{ value: string; label: string }>> = {
+      jobType: jobTypeOptions,
+      experienceLevel: experienceLevelOptions,
+      workLocation: workLocationOptions,
+    };
+
+    const option = optionMap[category]?.find((opt) => opt.value === value);
+    return option?.label || value;
+  };
+
+  // Loading skeletons
+  const renderSkeletons = () => {
+    const skeletons = Array.from({ length: 6 }, (_, index) => (
+      <div
+        key={index}
+        className={viewMode === "grid" ? "col-span-1" : "w-full"}
+      >
+        <JobCardSkeleton viewMode={viewMode} />
+      </div>
+    ));
+
+    return viewMode === "grid" ? (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {skeletons}
+      </div>
+    ) : (
+      <div className="space-y-6">{skeletons}</div>
+    );
+  };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+        <div className="text-center py-12">
+          <div className="text-red-400 text-6xl mb-4">⚠️</div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Failed to load jobs
+          </h3>
+          <p className="text-gray-600 mb-4">
+            There was an error loading the job listings.
+          </p>
+          <Button onClick={() => window.location.reload()}>Try Again</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -261,8 +287,8 @@ const FindWorkPage = () => {
             Find Your Dream Job
           </h1>
           <p className="text-gray-600">
-            Discover {filteredJobs.length} amazing opportunity
-            {filteredJobs.length !== 1 ? "ies" : ""} waiting for you
+            Discover {totalJobs} amazing opportunity
+            {totalJobs !== 1 ? "ies" : ""} waiting for you
           </p>
         </div>
 
@@ -275,6 +301,7 @@ const FindWorkPage = () => {
               placeholder="Search jobs, companies, or keywords..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handleSearch()}
               className="pl-10 pr-4 py-2"
             />
           </div>
@@ -327,17 +354,18 @@ const FindWorkPage = () => {
                 Job Type
               </label>
               <div className="flex flex-wrap gap-2">
-                {jobTypeOptions.map((type) => (
+                {jobTypeOptions.map((option) => (
                   <Button
-                    key={type}
+                    key={option.value}
                     variant={
-                      filters.jobType.includes(type) ? "primary" : "outline"
+                      filters.jobType.includes(option.value)
+                        ? "primary"
+                        : "outline"
                     }
                     size="sm"
-                    onClick={() => toggleFilter("jobType", type)}
-                    className="capitalize"
+                    onClick={() => toggleFilter("jobType", option.value)}
                   >
-                    {type}
+                    {option.label}
                   </Button>
                 ))}
               </div>
@@ -349,41 +377,43 @@ const FindWorkPage = () => {
                 Experience Level
               </label>
               <div className="flex flex-wrap gap-2">
-                {experienceLevelOptions.map((level) => (
+                {experienceLevelOptions.map((option) => (
                   <Button
-                    key={level}
+                    key={option.value}
                     variant={
-                      filters.experienceLevel.includes(level)
+                      filters.experienceLevel.includes(option.value)
                         ? "primary"
                         : "outline"
                     }
                     size="sm"
-                    onClick={() => toggleFilter("experienceLevel", level)}
-                    className="capitalize"
+                    onClick={() =>
+                      toggleFilter("experienceLevel", option.value)
+                    }
                   >
-                    {level}
+                    {option.label}
                   </Button>
                 ))}
               </div>
             </div>
 
-            {/* Job Style Filter */}
+            {/* Work Location Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Job Style
+                Work Location
               </label>
               <div className="flex flex-wrap gap-2">
-                {jobStyleOptions.map((style) => (
+                {workLocationOptions.map((option) => (
                   <Button
-                    key={style}
+                    key={option.value}
                     variant={
-                      filters.jobStyle.includes(style) ? "primary" : "outline"
+                      filters.workLocation.includes(option.value)
+                        ? "primary"
+                        : "outline"
                     }
                     size="sm"
-                    onClick={() => toggleFilter("jobStyle", style)}
-                    className="capitalize"
+                    onClick={() => toggleFilter("workLocation", option.value)}
                   >
-                    {style}
+                    {option.label}
                   </Button>
                 ))}
               </div>
@@ -395,64 +425,151 @@ const FindWorkPage = () => {
         {hasActiveFilters && (
           <div className="flex flex-wrap gap-2 mb-4">
             {filters.jobType.map((type) => (
-              <Badge key={type} variant="secondary" className="capitalize">
-                {type} ×
+              <Badge
+                key={type}
+                variant="secondary"
+                className="capitalize cursor-pointer"
+                onClick={() => toggleFilter("jobType", type)}
+              >
+                {getFilterLabel("jobType", type)} ×
               </Badge>
             ))}
             {filters.experienceLevel.map((level) => (
-              <Badge key={level} variant="secondary" className="capitalize">
-                {level} ×
+              <Badge
+                key={level}
+                variant="secondary"
+                className="capitalize cursor-pointer"
+                onClick={() => toggleFilter("experienceLevel", level)}
+              >
+                {getFilterLabel("experienceLevel", level)} ×
               </Badge>
             ))}
-            {filters.jobStyle.map((style) => (
-              <Badge key={style} variant="secondary" className="capitalize">
-                {style} ×
+            {filters.workLocation.map((location) => (
+              <Badge
+                key={location}
+                variant="secondary"
+                className="capitalize cursor-pointer"
+                onClick={() => toggleFilter("workLocation", location)}
+              >
+                {getFilterLabel("workLocation", location)} ×
               </Badge>
             ))}
           </div>
         )}
 
         {/* Jobs List/Grid */}
-        <div
-          className={
-            viewMode === "grid"
-              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-              : "space-y-6"
-          }
-        >
-          {filteredJobs.length > 0 ? (
-            filteredJobs.map((job, index) => (
-              <JobCard
-                key={`${job.companyName}-${job.jobTitle}-${index}`}
-                {...job}
-                viewMode={viewMode}
-              />
-            ))
-          ) : (
+        {isLoading ? (
+          renderSkeletons()
+        ) : (
+          <>
             <div
-              className={`text-center py-12 ${
-                viewMode === "grid" ? "col-span-full" : ""
-              }`}
+              className={
+                viewMode === "grid"
+                  ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                  : "space-y-6"
+              }
             >
-              <div className="text-gray-400 text-6xl mb-4">🔍</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No jobs found
-              </h3>
-              <p className="text-gray-600">
-                Try adjusting your search terms or filters
-              </p>
+              {filteredJobs.length > 0 ? (
+                filteredJobs.map((job) => (
+                  <JobCard
+                    key={job.id || job.id}
+                    {...mapJobToCardProps(job)}
+                    viewMode={viewMode}
+                    jobId={job.id || job.id}
+                  />
+                ))
+              ) : (
+                <div
+                  className={`text-center py-12 ${
+                    viewMode === "grid" ? "col-span-full" : ""
+                  }`}
+                >
+                  <div className="text-gray-400 text-6xl mb-4">🔍</div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No jobs found
+                  </h3>
+                  <p className="text-gray-600">
+                    Try adjusting your search terms or filters
+                  </p>
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        {/* Load More Button (optional) */}
-        {filteredJobs.length > 0 && (
-          <div className="flex justify-center mt-8">
-            <Button className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/85 transition-colors font-medium">
-              Load More Jobs
-            </Button>
-          </div>
+            {/* Load More Button */}
+            {jobs.length < totalJobs && (
+              <div className="flex justify-center mt-8">
+                <Button
+                  onClick={() => setPage((prev) => prev + 1)}
+                  disabled={isLoading}
+                  className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/85 transition-colors font-medium"
+                >
+                  {isLoading ? "Loading..." : "Load More Jobs"}
+                </Button>
+              </div>
+            )}
+          </>
         )}
+      </div>
+    </div>
+  );
+};
+
+// Skeleton component for loading state
+const JobCardSkeleton = ({ viewMode }: { viewMode: ViewMode }) => {
+  if (viewMode === "grid") {
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <div className="flex items-start gap-3 mb-3">
+          <Skeleton className="w-10 h-10 rounded-lg" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-3 w-1/2" />
+            <Skeleton className="h-3 w-2/3" />
+          </div>
+        </div>
+        <div className="flex gap-2 mb-3">
+          <Skeleton className="h-6 w-16 rounded-full" />
+          <Skeleton className="h-6 w-20 rounded-full" />
+          <Skeleton className="h-6 w-14 rounded-full" />
+        </div>
+        <Skeleton className="h-12 w-full mb-4" />
+        <div className="flex justify-between items-center pt-3 border-t border-gray-200">
+          <div className="space-y-1">
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-3 w-20" />
+          </div>
+          <Skeleton className="h-8 w-16 rounded-full" />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start gap-4">
+          <Skeleton className="w-12 h-12 rounded-lg" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-5 w-48" />
+            <div className="flex gap-4">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+            <div className="flex gap-2">
+              <Skeleton className="h-6 w-20 rounded-full" />
+              <Skeleton className="h-6 w-24 rounded-full" />
+              <Skeleton className="h-6 w-16 rounded-full" />
+            </div>
+            <Skeleton className="h-12 w-full" />
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+        <div className="flex gap-4">
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+        <Skeleton className="h-8 w-20 rounded-full" />
       </div>
     </div>
   );

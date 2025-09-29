@@ -25,6 +25,7 @@ export const apiClient = createApi({
     "Analysis",
     "Applications",
     "ApplicationAnalysis",
+    "PublicJobs",
   ], // Tag types for RTK Query
   endpoints: () => ({}), // Endpoints for RTK Query
 });

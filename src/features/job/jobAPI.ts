@@ -17,7 +17,7 @@ export const jobApi = apiClient.injectEndpoints({
         method: "POST",
         body: jobData,
       }),
-      invalidatesTags: ["Jobs"],
+      invalidatesTags: ["Jobs", "PublicJobs"],
     }),
 
     // Get employer's jobs
@@ -35,7 +35,7 @@ export const jobApi = apiClient.injectEndpoints({
           workLocation: params.workLocation,
         },
       }),
-      providesTags: ["Jobs"],
+      providesTags: ["Jobs", "PublicJobs"],
     }),
 
     // Get a single job
@@ -64,6 +64,7 @@ export const jobApi = apiClient.injectEndpoints({
       invalidatesTags: (result, error, { jobId }) => [
         { type: "Jobs", id: jobId },
         "Jobs",
+        "PublicJobs",
       ],
     }),
 
@@ -76,6 +77,7 @@ export const jobApi = apiClient.injectEndpoints({
       invalidatesTags: (result, error, jobId) => [
         { type: "Jobs", id: jobId },
         "Jobs",
+        "PublicJobs",
       ],
     }),
 
@@ -88,6 +90,7 @@ export const jobApi = apiClient.injectEndpoints({
       invalidatesTags: (result, error, jobId) => [
         { type: "Jobs", id: jobId },
         "Jobs",
+        "PublicJobs",
       ],
     }),
 
@@ -106,6 +109,62 @@ export const jobApi = apiClient.injectEndpoints({
       }),
       providesTags: ["Analysis", "Jobs"],
     }),
+    getPublicJobs: builder.query<JobsResponse, JobQueryParams>({
+      query: (params) => ({
+        url: "/jobs/users",
+        method: "GET",
+        params: {
+          page: params.page || 1,
+          limit: params.limit || 12,
+          search: params.search,
+          jobType: params.jobType,
+          experienceLevel: params.experienceLevel,
+          workLocation: params.workLocation,
+        },
+      }),
+      providesTags: ["PublicJobs", "Jobs"],
+    }),
+    getPublicJobDetails: builder.query<
+      { success: boolean; message: string; data: IJob },
+      string
+    >({
+      query: (jobId) => ({
+        url: `/jobs/${jobId}/users`,
+        method: "GET",
+      }),
+      providesTags: (result, error, id) => [{ type: "PublicJobs", id }],
+    }),
+    updateJobViewCount: builder.mutation<
+      { success: boolean; message: string; data: IJob },
+      string
+    >({
+      query: (jobId) => ({
+        url: `/jobs/${jobId}/users/view-count`,
+        method: "PATCH",
+      }),
+      invalidatesTags: (result, error, jobId) => [
+        { type: "PublicJobs", id: jobId },
+        "PublicJobs",
+        "Jobs",
+      ],
+    }),
+    applyToJob: builder.mutation<
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      { success: boolean; message: string; data: any },
+      {
+        jobId: string;
+        documentId?: string;
+        resumeUploadId?: string;
+        coverLetter?: string;
+      }
+    >({
+      query: ({ jobId, ...applicationData }) => ({
+        url: `/jobs/${jobId}/apply`,
+        method: "POST",
+        body: applicationData,
+      }),
+      invalidatesTags: ["Applications", "Jobs", "PublicJobs"],
+    }),
   }),
 });
 
@@ -118,4 +177,8 @@ export const {
   useCloseJobMutation,
   useDeleteJobMutation,
   useGetEmployerAnalysisQuery,
+  useGetPublicJobsQuery,
+  useGetPublicJobDetailsQuery,
+  useUpdateJobViewCountMutation,
+  useApplyToJobMutation,
 } = jobApi;
