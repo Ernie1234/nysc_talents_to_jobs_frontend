@@ -139,3 +139,33 @@ export interface JobQueryParams {
   experienceLevel?: string;
   workLocation?: string;
 }
+
+// Add to your jobTypes.ts
+export interface EmployerAnalysis {
+  totalJobs: number;
+  publishedJobs: number;
+  draftedJobs: number;
+  closedJobs: number;
+  archivedJobs: number;
+  totalApplicants: number;
+  totalViews: number;
+  shortlistedCount: number;
+  acceptedCount: number;
+  jobs: Array<{
+    jobId: string;
+    title: string;
+    status: string;
+    applicationCount: number;
+    viewCount: number;
+    shortlistedCount: number;
+    acceptedCount: number;
+    createdAt: string;
+    publishedAt?: string;
+  }>;
+}
+
+export interface AnalysisResponse {
+  success: boolean;
+  message: string;
+  data: EmployerAnalysis;
+}

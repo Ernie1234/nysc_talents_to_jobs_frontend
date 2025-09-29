@@ -1,5 +1,6 @@
 import { apiClient } from "@/app/api-client";
 import type {
+  AnalysisResponse,
   CreateJobRequest,
   CreateJobResponse,
   IJob,
@@ -98,6 +99,13 @@ export const jobApi = apiClient.injectEndpoints({
       }),
       invalidatesTags: ["Jobs"],
     }),
+    getEmployerAnalysis: builder.query<AnalysisResponse, void>({
+      query: () => ({
+        url: "/jobs/analysis",
+        method: "GET",
+      }),
+      providesTags: ["Analysis", "Jobs"],
+    }),
   }),
 });
 
@@ -109,4 +117,5 @@ export const {
   usePublishJobMutation,
   useCloseJobMutation,
   useDeleteJobMutation,
+  useGetEmployerAnalysisQuery,
 } = jobApi;

@@ -1,24 +1,30 @@
 import { type LucideIcon } from "lucide-react";
 
-import Wrapper from "../Wrapper";
-
 interface QuickCardProps {
   title: string;
   number: string | number;
   icon: LucideIcon;
+  color?: string;
 }
 
-const QuickCard = ({ title, number, icon: Icon }: QuickCardProps) => {
+const QuickCard = ({
+  title,
+  number,
+  icon: Icon,
+  color = "bg-green-800",
+}: QuickCardProps) => {
   return (
-    <Wrapper className="flex w-full justify-between items-center gap-14 p-5 rounded-2xl mr-4">
-      <div className="flex flex-col gap-2">
-        <span className="text-green-800 font-semibold text-4xl">{number}</span>
-        <span className="text-gray-500 text-base">{title}</span>
+    <div className="flex w-full justify-between items-center gap-4 p-6 rounded-2xl bg-white shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+      <div className="flex flex-col gap-1">
+        <span className="text-gray-900 font-bold text-2xl">{number}</span>
+        <span className="text-gray-600 text-sm font-medium">{title}</span>
       </div>
-      <div className="flex p-3 justify-center items-center bg-green-800 rounded-full text-white h-fit">
-        <Icon size={24} />
+      <div
+        className={`flex p-3 justify-center items-center ${color} rounded-full text-white h-fit`}
+      >
+        <Icon size={20} />
       </div>
-    </Wrapper>
+    </div>
   );
 };
 

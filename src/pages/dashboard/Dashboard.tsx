@@ -13,10 +13,7 @@ import type { ProfileTask } from "@/types/progressCardTypes";
 import { useState } from "react";
 
 const Dashboard = () => {
-  const { isAuthenticated, user } = useAuth();
-
-  console.log("Dashboard - isAuthenticated:", isAuthenticated);
-  console.log("Dashboard - user:", user);
+  const { user } = useAuth();
 
   const [tasks, setTasks] = useState<ProfileTask[]>(defaultTasks);
   const completionPercentage = calculateCompletionPercentage(tasks);
