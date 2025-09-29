@@ -1,4 +1,5 @@
 import { ApplicationChart } from "@/components/dashboard/ApplicationChart";
+import EmployerDashboard from "@/components/dashboard/employerDashboard/EmployerDashboard";
 import { ProfileCompletion } from "@/components/dashboard/ProfileCompletion";
 import ResumeList from "@/components/dashboard/resume/ResumeList";
 import SkillWrapper from "@/components/dashboard/SkillWrapper";
@@ -33,36 +34,42 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="w-full h-full space-y-3 font-raleway">
-      <Wrapper>
-        <h4 className="scroll-m-20 text-xl font-semibold text-green-800 tracking-tight">
-          {getTimeBasedGreeting(user?.firstName)} 👋
-        </h4>
-      </Wrapper>
+    <>
+      {user?.role === "corps_member" ? (
+        <div className="w-full h-full space-y-3 font-raleway">
+          <Wrapper>
+            <h4 className="scroll-m-20 text-xl font-semibold text-green-800 tracking-tight">
+              {getTimeBasedGreeting(user?.firstName)} 👋
+            </h4>
+          </Wrapper>
 
-      <div className="flex flex-col md:flex-row gap-4">
-        <ProfileCompletion
-          completionPercentage={completionPercentage}
-          tasks={tasks}
-          onTaskToggle={handleTaskToggle}
-          onViewAll={handleViewAll}
-        />
-        <RecentActivities />
-        <ApplicationChart />
-      </div>
+          <div className="flex flex-col md:flex-row gap-4">
+            <ProfileCompletion
+              completionPercentage={completionPercentage}
+              tasks={tasks}
+              onTaskToggle={handleTaskToggle}
+              onViewAll={handleViewAll}
+            />
+            <RecentActivities />
+            <ApplicationChart />
+          </div>
 
-      <div className="p-3 rounded-md shadow bg-white flex flex-col space-y-6">
-        <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-          My Recent Resume
-        </h4>
-        <div className="flex space-x-3">
-          <ResumeList />
+          <div className="p-3 rounded-md shadow bg-white flex flex-col space-y-6">
+            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+              My Recent Resume
+            </h4>
+            <div className="flex space-x-3">
+              <ResumeList />
+            </div>
+          </div>
+          <Wrapper>
+            <SkillWrapper />
+          </Wrapper>
         </div>
-      </div>
-      <Wrapper>
-        <SkillWrapper />
-      </Wrapper>
-    </div>
+      ) : (
+        <EmployerDashboard />
+      )}
+    </>
   );
 };
 

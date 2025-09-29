@@ -1,6 +1,6 @@
 // hooks/useAuth.ts
 import { useAppDispatch, useTypedSelector } from "@/app/hook";
-import { checkTokenExpiry } from "@/features/auth/authSlice";
+import { checkTokenExpiry, logout } from "@/features/auth/authSlice";
 import { useEffect } from "react";
 
 export const useAuth = () => {
@@ -21,6 +21,11 @@ export const useAuth = () => {
     return () => clearInterval(interval);
   }, [dispatch]);
 
+  // Add logout function
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   return {
     ...auth,
     // Add computed properties
@@ -32,5 +37,7 @@ export const useAuth = () => {
       auth.accessToken &&
       auth.expiresAt &&
       auth.expiresAt > Date.now(),
+    // Add logout function
+    logout: handleLogout,
   };
 };

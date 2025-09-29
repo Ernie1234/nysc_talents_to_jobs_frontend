@@ -5,19 +5,19 @@ import AppHeader from "@/components/AppHeader";
 
 const AppLayout = () => {
   return (
-    // <div classN">
-    <SidebarProvider>
-      <AppSidebar />
-      <div className="w-full">
-        <SidebarInset>
-          <AppHeader />
-          <div className="py-3 mr-3">
-            <Outlet />
-          </div>
-        </SidebarInset>
-      </div>
-    </SidebarProvider>
-    // </div>
+    <div className="">
+      <SidebarProvider className="gap-4">
+        <AppSidebar />
+        <div className="w-full">
+          <SidebarInset>
+            <AppHeader />
+            <div className="py-3 mr-3">
+              <Outlet />
+            </div>
+          </SidebarInset>
+        </div>
+      </SidebarProvider>
+    </div>
   );
 };
 

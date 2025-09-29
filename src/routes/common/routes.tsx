@@ -15,6 +15,7 @@ import { ResumePage } from "@/pages/dashboard/ResumePage";
 import DocumentEditPage from "@/pages/dashboard/DocumentEditPage";
 import FindWorkPage from "@/pages/dashboard/FindWorkPage";
 import ApplicationPage from "@/pages/dashboard/ApplicationPage";
+import EmployerJobCreatePage from "@/pages/dashboard/EmployerJobCreatePage";
 
 export const publicRoutePaths = [
   {
@@ -55,6 +56,10 @@ export const protectedRoutePaths = [
   {
     path: PROTECTED_ROUTES.FIND_WORK,
     element: <FindWorkPage />,
+  },
+  {
+    path: PROTECTED_ROUTES.CREATE_JOB,
+    element: <EmployerJobCreatePage />,
   },
   {
     path: PROTECTED_ROUTES.SETTINGS,

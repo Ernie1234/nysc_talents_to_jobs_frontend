@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   BriefcaseBusiness,
   ChevronUp,
@@ -5,6 +6,7 @@ import {
   FileUser,
   LayoutPanelLeft,
   Settings,
+  LogOut,
 } from "lucide-react";
 
 import {
@@ -23,9 +25,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "./ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Avatar,
   AvatarFallback,
@@ -36,37 +39,85 @@ import {
 import { getCapitalizedInitials } from "@/lib/helpers";
 import { Separator } from "./ui/separator";
 import Logo from "./logo";
-
-const items = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutPanelLeft,
-  },
-  {
-    title: "Find Work",
-    url: "/find-work",
-    icon: BriefcaseBusiness,
-  },
-  {
-    title: "Applications",
-    url: "dashboard/applications",
-    icon: Dock,
-  },
-  {
-    title: "Resume",
-    url: "/dashboard/resume",
-    icon: FileUser,
-  },
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings,
-  },
-];
+import { useLogoutMutation } from "@/features/auth/authAPI";
+import { toast } from "sonner";
+import { AUTH_ROUTES } from "@/routes/common/routePath";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [logoutMutation, { isLoading }] = useLogoutMutation();
+
+  console.log(user?.role);
+
+  // Base menu items that are common for all users
+  const baseItems = [
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: LayoutPanelLeft,
+    },
+    {
+      title: user?.role === "employer" ? "Create Job" : "Find Work",
+      url: user?.role === "employer" ? "/create-job" : "/find-work",
+      icon: BriefcaseBusiness,
+    },
+    {
+      title: user?.role === "employer" ? "Applicants" : "Applications",
+      url: "/dashboard/applications",
+      icon: Dock,
+    },
+    {
+      title: "Settings",
+      url: "/settings",
+      icon: Settings,
+    },
+  ];
+
+  // Add Resume item only for non-employer users (job seekers)
+  const menuItems =
+    user?.role === "employer"
+      ? baseItems
+      : [
+          ...baseItems.slice(0, 3), // Dashboard, Find Work, Applications
+          {
+            title: "Resume",
+            url: "/dashboard/resume",
+            icon: FileUser,
+          },
+          ...baseItems.slice(3), // Settings
+        ];
+
+  const handleSignOut = async () => {
+    try {
+      // Call the logout mutation
+      await logoutMutation({}).unwrap();
+
+      // Clear local state using the logout function from useAuth
+      logout();
+
+      // Show success message
+      toast.success("Signed out successfully");
+
+      // Redirect to login page
+      navigate(AUTH_ROUTES.SIGN_IN);
+    } catch (error: any) {
+      console.error("Logout error:", error);
+
+      // Even if the API call fails, clear local state
+      logout();
+
+      // Show appropriate error message
+      if (error?.data?.message) {
+        toast.error(error.data.message);
+      } else {
+        toast.error("Signed out locally (server error occurred)");
+      }
+
+      // Still redirect to login page
+      navigate(AUTH_ROUTES.SIGN_IN);
+    }
+  };
 
   return (
     <Sidebar variant="floating" {...props}>
@@ -78,16 +129,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <Separator />
       <SidebarContent className="bg-white">
         <SidebarGroup>
-          {/* <SidebarGroupLabel>COFA</SidebarGroupLabel> */}
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton className="py-5" asChild>
-                    <a href={item.url}>
+                    <Link to={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -113,22 +163,50 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <AvatarStatus variant="online" className="size-2.5" />
                     </AvatarIndicator>
                   </Avatar>
-                  {user?.fullName}
+                  <div className="flex flex-col items-start flex-1 min-w-0">
+                    <span className="font-medium truncate max-w-[120px]">
+                      {user?.fullName}
+                    </span>
+                    <span className="text-xs text-muted-foreground truncate max-w-[120px]">
+                      {user?.email}
+                    </span>
+                  </div>
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" className="w-56">
-                <DropdownMenuItem>
-                  <Link to={`/profile`}>Profile</Link>
+                <DropdownMenuItem asChild>
+                  <Link to={`/profile`} className="flex items-center w-full">
+                    <FileUser className="w-4 h-4 mr-2" />
+                    Profile
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link to={`/settings/account`}>Account</Link>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to={`/settings/account`}
+                    className="flex items-center w-full"
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    Account
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link to="/settings">Billing</Link>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/settings/billing"
+                    className="flex items-center w-full"
+                  >
+                    <BriefcaseBusiness className="w-4 h-4 mr-2" />
+                    Billing
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Sign out</span>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleSignOut}
+                  disabled={isLoading}
+                  className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  {isLoading ? "Signing out..." : "Sign out"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
