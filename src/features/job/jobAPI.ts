@@ -47,7 +47,7 @@ export const jobApi = apiClient.injectEndpoints({
         url: `/jobs/${jobId}`,
         method: "GET",
       }),
-      providesTags: (result, error, id) => [{ type: "Jobs", id }],
+      providesTags: (_result, _error, id) => [{ type: "Jobs", id }],
     }),
 
     // Update a job
@@ -61,7 +61,7 @@ export const jobApi = apiClient.injectEndpoints({
         method: "PUT",
         body: updates,
       }),
-      invalidatesTags: (result, error, { jobId }) => [
+      invalidatesTags: (_result, _error, { jobId }) => [
         { type: "Jobs", id: jobId },
         "Jobs",
         "PublicJobs",
@@ -74,7 +74,7 @@ export const jobApi = apiClient.injectEndpoints({
         url: `/jobs/${jobId}/publish`,
         method: "PATCH",
       }),
-      invalidatesTags: (result, error, jobId) => [
+      invalidatesTags: (_result, _error, jobId) => [
         { type: "Jobs", id: jobId },
         "Jobs",
         "PublicJobs",
@@ -87,7 +87,7 @@ export const jobApi = apiClient.injectEndpoints({
         url: `/jobs/${jobId}/close`,
         method: "PATCH",
       }),
-      invalidatesTags: (result, error, jobId) => [
+      invalidatesTags: (_result, _error, jobId) => [
         { type: "Jobs", id: jobId },
         "Jobs",
         "PublicJobs",
@@ -132,7 +132,7 @@ export const jobApi = apiClient.injectEndpoints({
         url: `/jobs/${jobId}/users`,
         method: "GET",
       }),
-      providesTags: (result, error, id) => [{ type: "PublicJobs", id }],
+      providesTags: (_result, _error, id) => [{ type: "PublicJobs", id }],
     }),
     updateJobViewCount: builder.mutation<
       { success: boolean; message: string; data: IJob },
@@ -142,7 +142,7 @@ export const jobApi = apiClient.injectEndpoints({
         url: `/jobs/${jobId}/users/view-count`,
         method: "PATCH",
       }),
-      invalidatesTags: (result, error, jobId) => [
+      invalidatesTags: (_result, _error, jobId) => [
         { type: "PublicJobs", id: jobId },
         "PublicJobs",
         "Jobs",

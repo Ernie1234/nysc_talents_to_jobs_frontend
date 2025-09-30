@@ -69,7 +69,12 @@ export interface IJob {
   employerId: IEmployerId;
   title: string;
   jobType: "part-time" | "full-time" | "contract" | "intern"; // Add other types as needed
-  experienceLevel: "entry-level" | "mid-level" | "senior" | "intern";
+  experienceLevel:
+    | "entry-level"
+    | "mid-level"
+    | "senior-level"
+    | "intern"
+    | "executive";
   workLocation: "remote" | "on-site" | "hybrid";
   jobPeriod: string; // e.g., "1-3 months", "more than 12 months"
   skills: string[];

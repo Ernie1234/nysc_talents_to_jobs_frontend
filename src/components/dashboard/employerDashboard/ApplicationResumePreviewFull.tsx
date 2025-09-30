@@ -114,7 +114,7 @@ export const ApplicationResumePreviewFullModal = ({
                 Skills & Expertise
               </h3>
               <div className="flex flex-wrap gap-2">
-                {resumeDocument.skills.slice(0, 10).map((skillId, index) => (
+                {resumeDocument.skills.slice(0, 10).map((_skillId, index) => (
                   <span
                     key={index}
                     className="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full border"

@@ -27,7 +27,7 @@ export const documentApi = apiClient.injectEndpoints({
         data: IDocument;
         message: string;
       }) => response.data,
-      providesTags: (result, error, id) => [{ type: "documents", id }],
+      providesTags: (_result, _error, id) => [{ type: "documents", id }],
     }),
 
     createDocument: builder.mutation<
@@ -52,7 +52,7 @@ export const documentApi = apiClient.injectEndpoints({
         method: "PATCH",
         body: updates,
       }),
-      invalidatesTags: (result, error, { documentId }) => [
+      invalidatesTags: (_result, _error, { documentId }) => [
         { type: "documents", id: documentId },
         "documents",
       ],

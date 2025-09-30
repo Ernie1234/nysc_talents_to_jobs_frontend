@@ -22,7 +22,7 @@ export const resumeUploadApi = apiClient.injectEndpoints({
     // Get specific resume
     getResumeById: builder.query({
       query: (resumeId: string) => `/resume-uploads/${resumeId}`,
-      providesTags: (result, error, id) => [{ type: "Resumes", id }],
+      providesTags: (_result, _error, id) => [{ type: "Resumes", id }],
     }),
 
     // Delete resume

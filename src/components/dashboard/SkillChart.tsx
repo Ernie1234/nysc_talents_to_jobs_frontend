@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useResumeContext } from "@/context/resume-info-provider";
 import ProgressCard from "./ProgressCard";
 import { useMemo } from "react";
@@ -8,14 +9,11 @@ const SkillChart = () => {
 
   console.log("Skills data here: ", resumeInfo);
 
-  // Calculate trends based on skill updates (you might need to store historical data)
   const calculateTrend = (skills: any[]) => {
-    // This is a simplified example - you'd need historical data for real trends
     const averageRating =
       skills.reduce((sum, skill) => sum + (skill.rating || 0), 0) /
       skills.length;
 
-    // Mock trend calculation - replace with actual logic based on your data
     const trendValue = averageRating > 3 ? "↑8%" : "↓2%";
     const trendDescription =
       averageRating > 3 ? "vs last month" : "needs improvement";
@@ -28,16 +26,25 @@ const SkillChart = () => {
       return null;
     }
 
+    // Filter out skills with null or undefined names
+    const validSkills = resumeInfo.skills.filter(
+      (skill) => skill.name != null && skill.name.trim() !== ""
+    );
+
+    if (validSkills.length === 0) {
+      return null;
+    }
+
     const overallPercentage = Math.round(
-      (resumeInfo.skills.reduce((sum, skill) => sum + (skill.rating || 0), 0) /
-        (resumeInfo.skills.length * 5)) *
+      (validSkills.reduce((sum, skill) => sum + (skill.rating || 0), 0) /
+        (validSkills.length * 5)) *
         100
     );
 
-    const skillItems = resumeInfo.skills
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0)) // Sort by rating descending
+    const skillItems = validSkills
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
       .map((skill) => ({
-        label: skill.name,
+        label: skill.name!, // Use non-null assertion since we filtered
         percentage: Math.round(((skill.rating || 0) / 5) * 100),
       }));
 
@@ -46,7 +53,7 @@ const SkillChart = () => {
       day: "numeric",
     });
 
-    const trend = calculateTrend(resumeInfo.skills);
+    const trend = calculateTrend(validSkills);
 
     return {
       percentage: overallPercentage,

@@ -45,7 +45,7 @@ export const applicationApi = apiClient.injectEndpoints({
         url: `/applications/${applicationId}`,
         method: "GET",
       }),
-      providesTags: (result, error, id) => [{ type: "Applications", id }],
+      providesTags: (_result, _error, id) => [{ type: "Applications", id }],
     }),
 
     // Update application status
@@ -58,7 +58,7 @@ export const applicationApi = apiClient.injectEndpoints({
         method: "PUT",
         body: updates,
       }),
-      invalidatesTags: (result, error, { applicationId }) => [
+      invalidatesTags: (_result, _error, { applicationId }) => [
         { type: "Applications", id: applicationId },
         "Applications",
         "ApplicationAnalysis",
