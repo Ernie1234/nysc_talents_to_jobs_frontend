@@ -163,7 +163,7 @@ const ApplyButton = ({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">Apply to {jobTitle}</DialogTitle>
           <CardDescription>
@@ -171,7 +171,7 @@ const ApplyButton = ({
           </CardDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+        <div className="grid grid-cols-1 gap-6 mt-4 w-full">
           {/* Quick Apply Section */}
           <Card>
             <CardHeader>
