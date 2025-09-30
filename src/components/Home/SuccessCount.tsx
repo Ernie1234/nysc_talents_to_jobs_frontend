@@ -2,7 +2,7 @@ import { CountingNumber } from "../ui/counting-number";
 
 const SuccessCount = () => {
   return (
-    <div className="flex gap-16 py-16 items-center justify-center">
+    <div className="flex flex-wrap gap-16 py-16 items-center justify-center">
       <div className="flex items-center justify-center flex-col">
         <div className="flex">
           <CountingNumber

@@ -6,7 +6,7 @@ const WhyCopa = () => {
       <h4 className="scroll-m-20 text-3xl font-semibold tracking-tight">
         Why Choose <span className="text-green-900">COPA</span>
       </h4>
-      <div className="flex gap-10">
+      <div className="flex flex-col md:flex-row gap-10">
         <Wrapper className="shadow-2xl space-y-4 max-w-sm p-8 rounded-xl text-center">
           <p className="text-5xl">🔍</p>
           <h4 className="scroll-m-20 text-2xl font-semibold tracking-tight">

@@ -28,15 +28,9 @@ export default function HeroSection() {
         }}
       >
         {/* Content */}
-        <div className="flex flex-col items-center justify-center max-w-4xl mx-auto space-y-10 h-full px-8">
+        <div className="flex flex-col items-center justify-center max-w-4xl mx-auto md:space-y-10 space-y-5 h-full px-8">
           {/* Main heading */}
-          {/* <h1 className="text-center text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-purple-200 to-fuchsia-400 bg-clip-text text-transparent animate-fade-in">
-            AI Agents That
-            <br />
-            <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-              Actually Perform
-            </span>
-          </h1> */}
+
           <WordRotate
             words={[
               "Find and Become a Professional with Passion",
@@ -44,25 +38,25 @@ export default function HeroSection() {
               "Get desired Job from Top Companies",
             ]}
             animationStyle="fade"
-            className="text-6xl text-center font-bold text-yellow-400 "
+            className="md:text-4xl text-3xl lg:text-6xl text-center font-bold text-yellow-400 "
             duration={3200}
             pauseDuration={500}
             loop={true}
           />
 
           {/* Subtitle */}
-          <p className="text-center text-xl text-purple-100 max-w-lg mx-auto animate-fade-in">
+          <p className="text-center md:text-xl text-purple-100 max-w-lg mx-auto animate-fade-in">
             Connect with opportunities that match your skills and location. Let
             our AI assistant guide you to your next career milestone
           </p>
 
           {/* CTA buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
+          <div className="flex flex-row gap-4 justify-center animate-fade-in">
             <Button
               asChild
               size="lg"
               variant="primary"
-              className="text-xl px-6 rounded-full"
+              className="md:text-xl px-6 rounded-full"
             >
               <Link to="/auth/register">Get Started</Link>
             </Button>
@@ -70,7 +64,7 @@ export default function HeroSection() {
               size="lg"
               asChild
               variant="outline"
-              className="text-xl px-6 rounded-full"
+              className="md:text-xl px-6 rounded-full"
             >
               <Link to="/auth/login">Login</Link>
             </Button>

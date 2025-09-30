@@ -9,7 +9,7 @@ const HomeLayout = () => {
     <div className="flex flex-col w-full h-auto">
       <div className="w-full h-full flex flex-col">
         <HomeNav />
-        <div className="px-24 py-4 space-y-6">
+        <div className="md:px-24 px-5 py-4 space-y-6">
           <HeroSection />
           <SuccessCount />
           <WhyCopa />

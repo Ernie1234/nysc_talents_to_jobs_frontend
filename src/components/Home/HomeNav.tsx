@@ -9,7 +9,7 @@ const HomeNav = () => {
       <div className="flex">
         <Link
           to="/auth/login"
-          className="bg-green-900 rounded-full flex space-x-2 text-white items-center justify-between gap-3 py-2 px-4 text-xl font-semibold"
+          className="bg-green-900 rounded-full flex space-x-2 text-white items-center justify-between gap-3 py-2 px-4 md:text-xl font-semibold"
         >
           <User size={26} />
           Login
