@@ -129,7 +129,7 @@ export const ApplicationResumePreview = ({
           </div>
 
           {/* Download/View Actions */}
-          <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex flex-col md:flex-row gap-2">
             <Button
               onClick={handleDownload}
               className="flex items-center gap-2"

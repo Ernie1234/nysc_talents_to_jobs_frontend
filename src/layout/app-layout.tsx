@@ -11,7 +11,7 @@ const AppLayout = () => {
         <div className="w-full">
           <SidebarInset>
             <AppHeader />
-            <div className="py-3 mr-3">
+            <div className="py-3 ml-3 md:ml-0 mr-3">
               <Outlet />
             </div>
           </SidebarInset>

@@ -230,7 +230,7 @@ const JobCard = ({
     >
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
-          <div className="flex items-start gap-4">
+          <div className="flex flex-col md:flex-row items-start gap-4">
             <div className="flex-shrink-0">
               {companyLogo ? (
                 <img
@@ -255,7 +255,7 @@ const JobCard = ({
                 {isFeatured && (
                   <Badge
                     variant="secondary"
-                    className="bg-blue-50 text-blue-700 border-blue-200 text-xs"
+                    className="bg-green-50 text-green-700 border-green-200 text-xs"
                   >
                     Featured
                   </Badge>
@@ -307,8 +307,8 @@ const JobCard = ({
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-border/40">
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:items-center justify-between pt-4 border-t border-border/40">
+          <div className="flex flex-col md:flex-row md:items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Clock className="h-4 w-4" />
               <span>{postedTime}</span>
