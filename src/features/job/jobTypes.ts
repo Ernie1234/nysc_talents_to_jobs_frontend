@@ -14,16 +14,6 @@ export interface IstaffId {
 }
 
 /**
- * Interface for the Salary Range object.
- */
-export interface ISalaryRange {
-  min: number;
-  max: number;
-  currency: string;
-  isPublic: boolean;
-}
-
-/**
  * Interface for the Hiring Location object.
  */
 export interface IHiringLocation {
@@ -80,7 +70,6 @@ export interface IJob {
   skills: string[];
   aboutJob: string;
   requirements: string;
-  salaryRange: ISalaryRange;
   hiringLocation: IHiringLocation;
   // FIX: Added 'archived' status to align with UI logic
   status: "published" | "draft" | "closed" | "archived";
@@ -106,12 +95,6 @@ export interface CreateJobRequest {
   skills: string[];
   aboutJob: string;
   requirements: string;
-  salaryRange: {
-    min: number;
-    max: number;
-    currency?: string;
-    isPublic?: boolean;
-  };
   hiringLocation: {
     type: "nation-wide" | "state";
     state?: string;

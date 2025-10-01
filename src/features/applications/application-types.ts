@@ -185,12 +185,6 @@ export interface UserApplication {
       type: string;
       state?: string;
     };
-    salaryRange?: {
-      min: number;
-      max: number;
-      currency: string;
-      isPublic: boolean;
-    };
   };
   staff: {
     firstName: string;

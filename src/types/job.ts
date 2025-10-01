@@ -97,15 +97,7 @@ export const jobFormSchema = z.object({
     .string()
     .min(50, "Job requirements must be at least 50 characters")
     .max(1000, "Job requirements must be less than 1000 characters"),
-  salaryRange: z
-    .object({
-      min: z.number().min(0, "Minimum salary must be positive"),
-      max: z.number().min(0, "Maximum salary must be positive"),
-    })
-    .refine((data) => data.max >= data.min, {
-      message: "Maximum salary must be greater than or equal to minimum salary",
-      path: ["max"],
-    }),
+
   hiringLocation: z
     .object({
       type: z.enum(["nation-wide", "state"]),

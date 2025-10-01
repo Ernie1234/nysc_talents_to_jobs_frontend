@@ -14,7 +14,7 @@ const WhyCopa = () => {
           </h4>
           <p className="leading-7 [&:not(:first-child)]:mt-6">
             Find the perfect job with our advanced search filters. Search by
-            location, salary, company size, and more
+            location, company size, and more
           </p>
         </Wrapper>
         <Wrapper className="shadow-2xl space-y-4 max-w-sm p-8 rounded-xl text-center">
@@ -24,7 +24,7 @@ const WhyCopa = () => {
           </h4>
           <p className="leading-7 [&:not(:first-child)]:mt-6">
             Find the perfect job with our advanced search filters. Search by
-            location, salary, company size, and more
+            location, company size, and more
           </p>
         </Wrapper>
         <Wrapper className="shadow-2xl space-y-4 max-w-sm p-8 rounded-xl text-center">
@@ -34,7 +34,7 @@ const WhyCopa = () => {
           </h4>
           <p className="leading-7 [&:not(:first-child)]:mt-6">
             Find the perfect job with our advanced search filters. Search by
-            location, salary, company size, and more
+            location, company size, and more
           </p>
         </Wrapper>
       </div>

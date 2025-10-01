@@ -1,5 +1,4 @@
 import { useId } from "react";
-import { useSliderInput } from "@/hooks/use-slider-input";
 import { Loader2, Save, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider, SliderThumb } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -32,56 +30,12 @@ import { SkillsInput } from "@/components/dashboard/StaffDashboard.tsx/SkillsInp
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useJobForm } from "@/hooks/useJobForm";
 
-const items = [
-  { id: 1, price: 80 },
-  { id: 2, price: 95 },
-  { id: 3, price: 110 },
-  { id: 100, price: 9999999 },
-];
-
 const StaffJobCreatePage = () => {
-  const id = useId();
   const id1 = useId();
   const id2 = useId();
-  const minValue = Math.min(...items.map((item) => item.price));
-  const maxValue = Math.max(...items.map((item) => item.price));
-
-  const {
-    sliderValues,
-    inputValues,
-    handleSliderChange,
-    handleInputChange,
-    validateAndUpdateValue,
-  } = useSliderInput({
-    minValue,
-    maxValue,
-    initialValue: [200000, 8000000],
-  });
 
   const { form, onSaveDraft, onPublish, isLoading, error } = useJobForm();
   const hiringLocationType = form.watch("hiringLocation.type");
-
-  // Update form values when slider changes
-  const handleSliderChangeWithForm = (values: [number, number]) => {
-    handleSliderChange(values);
-    form.setValue("salaryRange.min", values[0]);
-    form.setValue("salaryRange.max", values[1]);
-  };
-
-  const handleInputChangeWithForm = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: 0 | 1
-  ) => {
-    handleInputChange(e, index);
-    const value = parseFloat(e.target.value);
-    if (!isNaN(value)) {
-      if (index === 0) {
-        form.setValue("salaryRange.min", value);
-      } else {
-        form.setValue("salaryRange.max", value);
-      }
-    }
-  };
 
   const onSubmitPublish = form.handleSubmit((data) => onPublish(data));
   const onSubmitDraft = form.handleSubmit((data) => onSaveDraft(data));
@@ -430,56 +384,6 @@ const StaffJobCreatePage = () => {
                 </FormItem>
               )}
             />
-          </div>
-        </div>
-        <Separator />
-        {/* Salary Range - Updated to sync with form */}
-        <div className="flex flex-col md:flex-row items-start gap-5 md:gap-24 w-full mb-6">
-          <div className="flex flex-col">
-            <h4 className="text-lg font-semibold text-green-900">Salary</h4>
-            <p className="text-muted-foreground text-sm max-w-xs">
-              Please specify the estimated salary range for the role.
-            </p>
-          </div>
-          <div className="space-y-4">
-            <div className="flex flex-col gap-2.5">
-              <Label>Salary Range (NGN)</Label>
-              <Slider
-                value={sliderValues}
-                onValueChange={handleSliderChangeWithForm}
-                min={minValue}
-                max={maxValue}
-                step={10}
-                aria-label="Salary Range Slider"
-              >
-                <SliderThumb />
-                <SliderThumb />
-              </Slider>
-            </div>
-            <div className="flex items-center justify-between gap-4">
-              <div className="space-y-2.5">
-                <Label htmlFor={`${id}-min`}>Min Salary</Label>
-                <Input
-                  id={`${id}-min`}
-                  type="number"
-                  value={inputValues[0]}
-                  onChange={(e) => handleInputChangeWithForm(e, 0)}
-                  onBlur={() => validateAndUpdateValue(inputValues[0], 0)}
-                  placeholder={`₦${minValue}`}
-                />
-              </div>
-              <div className="space-y-2.5">
-                <Label htmlFor={`${id}-max`}>Max Salary</Label>
-                <Input
-                  id={`${id}-max`}
-                  type="number"
-                  value={inputValues[1]}
-                  onChange={(e) => handleInputChangeWithForm(e, 1)}
-                  onBlur={() => validateAndUpdateValue(inputValues[1], 1)}
-                  placeholder={`₦${maxValue}`}
-                />
-              </div>
-            </div>
           </div>
         </div>
         <Separator />

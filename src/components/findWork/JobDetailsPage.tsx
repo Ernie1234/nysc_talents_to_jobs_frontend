@@ -108,16 +108,6 @@ const JobDetailsPage = () => {
     }
   };
 
-  const formatSalary = (salary: {
-    min: number;
-    max: number;
-    currency: string;
-  }) => {
-    return `${
-      salary.currency
-    } ${salary.min.toLocaleString()} - ${salary.max.toLocaleString()}`;
-  };
-
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-0">
       <div className="">
@@ -251,19 +241,6 @@ const JobDetailsPage = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Salary Information */}
-            {job.salaryRange?.isPublic && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Salary
-                </h3>
-                <p className="text-2xl font-bold text-gray-900">
-                  {formatSalary(job.salaryRange)}
-                </p>
-                <p className="text-sm text-gray-600 mt-1">Per year</p>
-              </div>
-            )}
-
             {/* Job Details */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">

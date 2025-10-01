@@ -32,7 +32,6 @@ const mapJobToCardProps = (job: IJob) => ({
   experienceLevel: mapExperienceLevel(job.experienceLevel),
   jobStyle: mapWorkLocation(job.workLocation),
   isFeatured: job.viewCount > 50,
-  salaryRange: job.salaryRange,
   skills: job.skills,
   viewCounts: job.viewCount,
 });

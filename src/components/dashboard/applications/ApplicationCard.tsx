@@ -43,12 +43,6 @@ interface ApplicationCardProps {
         type: string;
         state?: string;
       };
-      salaryRange?: {
-        min: number;
-        max: number;
-        currency: string;
-        isPublic: boolean;
-      };
     };
     staff: {
       firstName: string;
@@ -114,16 +108,6 @@ const ApplicationCard = ({ application }: ApplicationCardProps) => {
       month: "short",
       day: "numeric",
     });
-  };
-
-  const formatSalary = (salaryRange: {
-    min: number;
-    max: number;
-    currency: string;
-  }) => {
-    return `${
-      salaryRange.currency
-    } ${salaryRange.min.toLocaleString()} - ${salaryRange.max.toLocaleString()}`;
   };
 
   const handleWithdraw = async () => {
@@ -209,11 +193,6 @@ const ApplicationCard = ({ application }: ApplicationCardProps) => {
               <Badge variant="outline" className="capitalize">
                 {application.job.workLocation}
               </Badge>
-              {application.job.salaryRange?.isPublic && (
-                <Badge variant="outline" className="bg-blue-50">
-                  {formatSalary(application.job.salaryRange)}
-                </Badge>
-              )}
             </div>
 
             {/* Resume Used */}
