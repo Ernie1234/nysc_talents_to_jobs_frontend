@@ -46,7 +46,7 @@ export interface IResumeDocument {
 export interface IApplication {
   _id: string;
   jobId: string;
-  employerId: string;
+  staffId: string;
   userId: string;
   documentId?: string;
   resumeUploadId?: string;
@@ -96,7 +96,7 @@ export interface UpdateApplicationInput {
   coverLetter?: string;
 }
 
-export interface EmployerApplicationAnalysis {
+export interface staffApplicationAnalysis {
   totalApplications: number;
   applicationStats: {
     pending: number;
@@ -146,7 +146,7 @@ export interface EmployerApplicationAnalysis {
 export interface ApplicationAnalysisResponse {
   success: boolean;
   message: string;
-  data: EmployerApplicationAnalysis;
+  data: staffApplicationAnalysis;
 }
 
 export type ApplicationStatus =
@@ -161,7 +161,7 @@ export type ApplicationStatus =
 export interface UserApplication {
   id: string;
   jobId: string;
-  employerId: string;
+  staffId: string;
   userId: string;
   documentId?: string;
   resumeUploadId?: string;
@@ -192,7 +192,7 @@ export interface UserApplication {
       isPublic: boolean;
     };
   };
-  employer: {
+  staff: {
     firstName: string;
     lastName: string;
     fullName: string;

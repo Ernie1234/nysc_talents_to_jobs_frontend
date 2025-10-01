@@ -28,7 +28,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { nigerianStates } from "@/types/job";
-import { SkillsInput } from "@/components/dashboard/employerDashboard/SkillsInput";
+import { SkillsInput } from "@/components/dashboard/StaffDashboard.tsx/SkillsInput";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useJobForm } from "@/hooks/useJobForm";
 
@@ -39,7 +39,7 @@ const items = [
   { id: 100, price: 9999999 },
 ];
 
-const EmployerJobCreatePage = () => {
+const StaffJobCreatePage = () => {
   const id = useId();
   const id1 = useId();
   const id2 = useId();
@@ -567,4 +567,4 @@ const EmployerJobCreatePage = () => {
   );
 };
 
-export default EmployerJobCreatePage;
+export default StaffJobCreatePage;

@@ -6,7 +6,7 @@ import { RefreshCw, Plus, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
-import { useGetEmployerJobsQuery } from "@/features/job/jobAPI";
+import { useGetStaffJobsQuery } from "@/features/job/jobAPI";
 
 const PostedJob = () => {
   const [limit] = useState(6);
@@ -15,7 +15,7 @@ const PostedJob = () => {
     isLoading,
     error,
     refetch,
-  } = useGetEmployerJobsQuery({ limit });
+  } = useGetStaffJobsQuery({ limit });
 
   const jobs = jobsData?.data?.jobs || [];
 
@@ -124,7 +124,7 @@ const PostedJob = () => {
             variant="outline"
             className="text-green-600 p-0 h-auto"
           >
-            <Link to="/employer/jobs">View all jobs →</Link>
+            <Link to="/staff/jobs">View all jobs →</Link>
           </Button>
         </div>
       )}

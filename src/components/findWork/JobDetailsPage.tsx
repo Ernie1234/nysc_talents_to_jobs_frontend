@@ -144,7 +144,7 @@ const JobDetailsPage = () => {
                 <div className="flex items-start gap-4">
                   <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold text-xl">
-                      {job.employerId?.firstName?.charAt(0) || "C"}
+                      {job.staffId?.firstName?.charAt(0) || "C"}
                     </span>
                   </div>
                   <div>
@@ -155,8 +155,8 @@ const JobDetailsPage = () => {
                       <div className="flex items-center gap-1">
                         <Building className="h-4 w-4" />
                         <span>
-                          {job.employerId?.companyName ||
-                            `${job.employerId?.firstName} ${job.employerId?.lastName}`}
+                          {job.staffId?.companyName ||
+                            `${job.staffId?.firstName} ${job.staffId?.lastName}`}
                         </span>
                       </div>
                       <div className="flex items-center gap-1">
@@ -304,8 +304,8 @@ const JobDetailsPage = () => {
               jobId={jobId!}
               jobTitle={job.title}
               companyName={
-                job.employerId?.companyName ||
-                `${job.employerId?.firstName} ${job.employerId?.lastName}`
+                job.staffId?.companyName ||
+                `${job.staffId?.firstName} ${job.staffId?.lastName}`
               }
               className="w-full py-3 text-lg"
             />

@@ -35,7 +35,7 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: "corps_member" | "employer" | "admin";
+  role: "interns" | "staff" | "admin";
   onboardingCompleted: boolean;
   onboardingStep: number;
   isEmailVerified: boolean;

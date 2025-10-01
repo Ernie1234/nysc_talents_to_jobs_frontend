@@ -36,7 +36,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  useGetEmployerApplicationsQuery,
+  useGetStaffApplicationsQuery,
   useUpdateApplicationMutation,
 } from "@/features/applications/applicationAPI";
 import type { ApplicationStatus } from "@/features/applications/application-types";
@@ -52,7 +52,7 @@ const ApplicationList = () => {
     data: applicationsData,
     isLoading,
     error,
-  } = useGetEmployerApplicationsQuery({
+  } = useGetStaffApplicationsQuery({
     status: selectedStatus !== "All" ? selectedStatus : undefined,
     search: searchTerm || undefined,
     page: 1,

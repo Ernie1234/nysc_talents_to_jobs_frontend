@@ -50,7 +50,7 @@ interface ApplicationCardProps {
         isPublic: boolean;
       };
     };
-    employer: {
+    staff: {
       firstName: string;
       lastName: string;
       fullName: string;
@@ -148,8 +148,8 @@ const ApplicationCard = ({ application }: ApplicationCardProps) => {
 
   const getCompanyName = () => {
     return (
-      application.employer.companyName ||
-      `${application.employer.firstName} ${application.employer.lastName}`
+      application.staff.companyName ||
+      `${application.staff.firstName} ${application.staff.lastName}`
     );
   };
 

@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
- * Interface for the Employer object nested within the Job structure.
+ * Interface for the staff object nested within the Job structure.
  */
-export interface IEmployerId {
+export interface IstaffId {
   _id: string;
   email: string;
   firstName: string;
   lastName: string;
-  role: "employer";
+  role: "staff";
   fullName: string;
   id: string;
   companyName: string | null;
@@ -51,7 +51,7 @@ export interface IApplicantUserId {
  */
 export interface IApplicant {
   jobId: string;
-  employerId: string;
+  staffId: string;
   userId: IApplicantUserId;
   documentId: string;
   status: "under_review" | "shortlisted" | "rejected" | "hired"; // Example statuses
@@ -66,7 +66,7 @@ export interface IApplicant {
  * FIX: Added 'archived' to status and 'companyLogo' (optional).
  */
 export interface IJob {
-  employerId: IEmployerId;
+  staffId: IstaffId;
   title: string;
   jobType: "part-time" | "full-time" | "contract" | "intern"; // Add other types as needed
   experienceLevel:
@@ -148,7 +148,7 @@ export interface JobQueryParams {
 }
 
 // Add to your jobTypes.ts
-export interface EmployerAnalysis {
+export interface staffAnalysis {
   totalJobs: number;
   publishedJobs: number;
   draftedJobs: number;
@@ -174,7 +174,7 @@ export interface EmployerAnalysis {
 export interface AnalysisResponse {
   success: boolean;
   message: string;
-  data: EmployerAnalysis;
+  data: staffAnalysis;
 }
 export interface ApplyToJobRequest {
   jobId: string;
@@ -187,7 +187,7 @@ export interface Application {
   _id: string;
   jobId: string;
   userId: string;
-  employerId: string;
+  staffId: string;
   documentId?: string;
   resumeUploadId?: string;
   coverLetter?: string;

@@ -58,12 +58,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: LayoutPanelLeft,
     },
     {
-      title: user?.role === "employer" ? "Create Job" : "Find Work",
-      url: user?.role === "employer" ? "/create-job" : "/find-work",
+      title: user?.role !== "interns" ? "Create Job" : "Find Work",
+      url: user?.role !== "interns" ? "/create-job" : "/find-work",
       icon: BriefcaseBusiness,
     },
     {
-      title: user?.role === "employer" ? "Applicants" : "Applications",
+      title: user?.role !== "interns" ? "Applicants" : "Applications",
       url: "/dashboard/applications",
       icon: Dock,
     },
@@ -74,9 +74,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     },
   ];
 
-  // Add Resume item only for non-employer users (job seekers)
+  // Add Resume item only for non-staff users (job seekers)
   const menuItems =
-    user?.role === "employer"
+    user?.role !== "interns"
       ? baseItems
       : [
           ...baseItems.slice(0, 3), // Dashboard, Find Work, Applications

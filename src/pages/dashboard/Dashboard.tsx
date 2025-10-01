@@ -1,8 +1,8 @@
 import { ApplicationChart } from "@/components/dashboard/ApplicationChart";
-import EmployerDashboard from "@/components/dashboard/employerDashboard/EmployerDashboard";
 import { ProfileCompletion } from "@/components/dashboard/ProfileCompletion";
 import ResumeList from "@/components/dashboard/resume/ResumeList";
 import SkillWrapper from "@/components/dashboard/SkillWrapper";
+import StaffDashboard from "@/components/dashboard/StaffDashboard.tsx/EmployerDashboard";
 import Wrapper from "@/components/dashboard/Wrapper";
 import { RecentActivities } from "@/components/recentActivities/RecentActivities";
 
@@ -32,7 +32,7 @@ const Dashboard = () => {
 
   return (
     <>
-      {user?.role === "corps_member" ? (
+      {user?.role === "interns" ? (
         <div className="w-full h-full space-y-3 font-raleway">
           <Wrapper>
             <h4 className="scroll-m-20 text-xl font-semibold text-green-800 tracking-tight">
@@ -64,7 +64,7 @@ const Dashboard = () => {
           </Wrapper>
         </div>
       ) : (
-        <EmployerDashboard />
+        <StaffDashboard />
       )}
     </>
   );

@@ -17,13 +17,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useRegisterMutation } from "@/features/auth/authAPI";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useEffect, useState } from "react";
 
 // Define the schema with proper types - ONLY these two are selectable
@@ -44,7 +37,7 @@ const schema = z.object({
       message:
         "Password must contain uppercase, lowercase, number and special character",
     }),
-  role: z.enum(["corps_member", "employer"]), // Only these two are selectable by users
+  role: z.enum(["CORPS_MEMBER", "SIWES"]), // Only these two are selectable by regular users
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -108,19 +101,17 @@ const RegisterForm = () => {
       lastName: "",
       email: "",
       password: "",
-      role: "corps_member",
+      role: "CORPS_MEMBER", // Default to CORPS_MEMBER
     },
   });
 
   // Watch email field to detect NITDA emails
   const emailValue = form.watch("email");
   const isNITDAEmail = emailValue.toLowerCase().endsWith("@nitda.gov.ng");
-  const selectedRole = form.watch("role");
 
-  // Auto-switch to employer role when NITDA email is detected
+  // Auto-switch to STAFF role when NITDA email is detected
   useEffect(() => {
-    if (isNITDAEmail && selectedRole !== "employer") {
-      form.setValue("role", "employer");
+    if (isNITDAEmail) {
       toast.info(
         "NITDA email detected. Your account will have enhanced administrator privileges.",
         {
@@ -128,14 +119,14 @@ const RegisterForm = () => {
         }
       );
     }
-  }, [isNITDAEmail, selectedRole, form]);
+  }, [isNITDAEmail]);
 
   const onSubmit = async (values: FormValues) => {
     try {
-      // Prepare the data for submission - backend will handle nitda role conversion
+      // Prepare the data for submission - convert role to STAFF for NITDA emails
       const submitData = {
         ...values,
-        // Send the form role, backend will convert NITDA emails to 'nitda' role
+        role: isNITDAEmail ? "STAFF" : values.role, // Override role to STAFF for NITDA emails
       };
 
       await register(submitData).unwrap();
@@ -264,52 +255,65 @@ const RegisterForm = () => {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="role"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Account Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  value={field.value} // Use the actual form value, not "nitda"
-                  disabled={isNITDAEmail} // Disable selection for NITDA emails
-                >
+          {/* Account Type Field - Hidden for NITDA emails, visible for others */}
+          {!isNITDAEmail && (
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Account Type</FormLabel>
                   <FormControl>
-                    <SelectTrigger
-                      className={
-                        isNITDAEmail
-                          ? "bg-green-50 border-green-200 text-green-700 font-semibold"
-                          : ""
-                      }
-                    >
-                      <SelectValue placeholder="Select account type">
-                        {isNITDAEmail
-                          ? "NITDA Administrator"
-                          : field.value === "corps_member"
-                          ? "Corps Member"
-                          : "Employer"}
-                      </SelectValue>
-                    </SelectTrigger>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div
+                        className={`border rounded-md p-4 cursor-pointer transition-all ${
+                          field.value === "CORPS_MEMBER"
+                            ? "border-green-500 bg-green-50"
+                            : "border-gray-200 hover:border-gray-300"
+                        }`}
+                        onClick={() => field.onChange("CORPS_MEMBER")}
+                      >
+                        <div className="font-medium">Corps Member</div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          NYSC program participant
+                        </div>
+                      </div>
+                      <div
+                        className={`border rounded-md p-4 cursor-pointer transition-all ${
+                          field.value === "SIWES"
+                            ? "border-green-500 bg-green-50"
+                            : "border-gray-200 hover:border-gray-300"
+                        }`}
+                        onClick={() => field.onChange("SIWES")}
+                      >
+                        <div className="font-medium">SIWES</div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Student industrial work experience
+                        </div>
+                      </div>
+                    </div>
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="corps_member">Corps Member</SelectItem>
-                    <SelectItem value="employer">Employer</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-                {/* {isNITDAEmail && (
-                  <div className="text-xs text-green-600 mt-1">
-                    <span className="font-semibold">
-                      🔒 Automatic Role Assignment:
-                    </span>{" "}
-                    NITDA emails receive enhanced administrator privileges.
-                  </div>
-                )} */}
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {/* Display STAFF role for NITDA emails without selection */}
+          {isNITDAEmail && (
+            <FormItem>
+              <FormLabel>Account Type</FormLabel>
+              <div className="border border-green-500 bg-green-50 rounded-md p-4">
+                <div className="font-medium text-green-700">NITDA Staff</div>
+                <div className="text-xs text-green-600 mt-1">
+                  Full system administrator privileges
+                </div>
+              </div>
+              <div className="text-xs text-muted-foreground mt-2">
+                NITDA email addresses are automatically granted staff access
+              </div>
+            </FormItem>
+          )}
 
           <Button
             disabled={isLoading}

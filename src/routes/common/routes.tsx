@@ -15,8 +15,8 @@ import { ResumePage } from "@/pages/dashboard/ResumePage";
 import DocumentEditPage from "@/pages/dashboard/DocumentEditPage";
 import FindWorkPage from "@/pages/dashboard/FindWorkPage";
 import ApplicationPage from "@/pages/dashboard/ApplicationPage";
-import EmployerJobCreatePage from "@/pages/dashboard/EmployerJobCreatePage";
 import JobDetailsPage from "@/components/findWork/JobDetailsPage";
+import StaffJobCreatePage from "@/pages/dashboard/StaffJobCreatePage";
 
 export const publicRoutePaths = [
   {
@@ -65,7 +65,7 @@ export const protectedRoutePaths = [
 
   {
     path: PROTECTED_ROUTES.CREATE_JOB,
-    element: <EmployerJobCreatePage />,
+    element: <StaffJobCreatePage />,
   },
   {
     path: PROTECTED_ROUTES.SETTINGS,
