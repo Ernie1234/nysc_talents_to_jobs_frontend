@@ -41,11 +41,12 @@ import {
 } from "@/features/applications/applicationAPI";
 import type { ApplicationStatus } from "@/features/applications/application-types";
 import { ApplicationDetails } from "./ApplicationDetails";
+import { useAuth } from "@/hooks/useAuth";
 
 const ApplicationList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("All");
-  // const [selectedJob, setSelectedJob] = useState<string>("All");
+  const { user } = useAuth();
   const [viewApplication, setViewApplication] = useState<string | null>(null);
 
   const {
@@ -395,32 +396,36 @@ const ApplicationList = () => {
                             View Details
                           </DropdownMenuItem>
 
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <DropdownMenuItem
-                                onSelect={(e) => e.preventDefault()}
-                              >
-                                <Filter className="h-4 w-4 mr-2" />
-                                Change Status
-                              </DropdownMenuItem>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent side="right" className="w-40">
-                              {statuses.map((status) => (
+                          {user && user.role === "ADMIN" && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
                                 <DropdownMenuItem
-                                  key={status}
-                                  onClick={() =>
-                                    handleStatusUpdate(application.id, status)
-                                  }
-                                  disabled={application.status === status}
+                                  onSelect={(e) => e.preventDefault()}
                                 >
-                                  <span className="capitalize">
-                                    {status.replace("_", " ")}
-                                  </span>
+                                  <Filter className="h-4 w-4 mr-2" />
+                                  Change Status
                                 </DropdownMenuItem>
-                              ))}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent
+                                side="right"
+                                className="w-40"
+                              >
+                                {statuses.map((status) => (
+                                  <DropdownMenuItem
+                                    key={status}
+                                    onClick={() =>
+                                      handleStatusUpdate(application.id, status)
+                                    }
+                                    disabled={application.status === status}
+                                  >
+                                    <span className="capitalize">
+                                      {status.replace("_", " ")}
+                                    </span>
+                                  </DropdownMenuItem>
+                                ))}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
                           <DropdownMenuItem>
                             <Mail className="h-4 w-4 mr-2" />
                             Send Email

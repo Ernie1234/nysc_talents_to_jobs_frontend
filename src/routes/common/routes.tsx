@@ -17,6 +17,12 @@ import FindWorkPage from "@/pages/dashboard/FindWorkPage";
 import ApplicationPage from "@/pages/dashboard/ApplicationPage";
 import JobDetailsPage from "@/components/findWork/JobDetailsPage";
 import StaffJobCreatePage from "@/pages/dashboard/StaffJobCreatePage";
+import CreateCoursePage from "@/components/dashboard/courses/CreateCoursePage";
+import CourseHomePage from "@/pages/course/CourseHomePage";
+import CourseDetailsPage from "@/pages/course/CourseDetailsPage";
+import CourseAttendancePage from "@/pages/course/CourseAttendancePage";
+import GenerateQrPage from "@/pages/course/GenerateQrPage";
+import { UsersTable } from "@/components/admin/UsersTable";
 
 export const publicRoutePaths = [
   {
@@ -53,7 +59,37 @@ export const protectedRoutePaths = [
       },
     ],
   },
+  {
+    path: PROTECTED_ROUTES.COURSES,
+    children: [
+      {
+        index: true,
+        path: PROTECTED_ROUTES.COURSES,
+        element: <CourseHomePage />,
+      },
+      {
+        path: PROTECTED_ROUTES.CREATE_COURSES,
+        element: <CreateCoursePage />,
+      },
+      {
+        path: PROTECTED_ROUTES.COURSES_DETAILS,
+        element: <CourseDetailsPage />,
+      },
+      {
+        path: PROTECTED_ROUTES.COURSES_ATTENDANCE,
+        element: <CourseAttendancePage />,
+      },
+      {
+        path: PROTECTED_ROUTES.COURSES_GENERATE_QR,
+        element: <GenerateQrPage />,
+      },
+    ],
+  },
 
+  {
+    path: PROTECTED_ROUTES.APPROVE_INTERNS,
+    element: <UsersTable />,
+  },
   {
     path: PROTECTED_ROUTES.FIND_WORK,
     element: <FindWorkPage />,

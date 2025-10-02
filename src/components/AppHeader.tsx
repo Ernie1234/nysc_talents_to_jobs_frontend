@@ -21,6 +21,8 @@ const AppHeader = () => {
     if (pathname.includes("/applications")) return "Applications";
     if (pathname.includes("/resume")) return "Resume";
     if (pathname.includes("/members")) return "Members";
+    if (pathname.includes("/courses")) return "Courses";
+    if (pathname.includes("/courses/create-course")) return "Create Course";
     return null;
   };
 

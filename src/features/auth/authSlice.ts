@@ -17,8 +17,15 @@ interface LoginResponse {
   expiresAt: number;
 }
 
+export interface Skill {
+  name: string;
+  level: number;
+  _id?: string; // Mongoose ID
+}
+
 interface UserProfile {
-  skills: string[];
+  status: "PENDING" | "ACCEPTED" | "REJECTED" | "SUSPENDED";
+  skills: Skill[];
   phoneNumber?: string;
   stateOfService?: string;
   placeOfPrimaryAssignment?: string;
@@ -35,7 +42,7 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: "interns" | "staff" | "admin";
+  role: "CORPS_MEMBER" | "SIWES" | "STAFF" | "ADMIN";
   onboardingCompleted: boolean;
   onboardingStep: number;
   isEmailVerified: boolean;
@@ -64,6 +71,8 @@ const getInitialAuthState = (): AuthState => {
   const expiresAt = expiresAtStr ? Number(expiresAtStr) : null;
   const user = userStr ? JSON.parse(userStr) : null;
   const isAuthenticated = isTokenValid(accessToken, expiresAt);
+
+  console.log("Initial Auth State in the authSlice: ", user);
 
   return {
     accessToken,

@@ -16,7 +16,7 @@ const AddResume = () => {
         title: "Untitled Resume",
       }).unwrap(); // Use .unwrap() to get the actual response data or throw an error
       const documentId = response.data.documentId;
-      navigate(`/dashboard/document/${documentId}/edit`); // Use navigate for routing
+      navigate(`/dashboard/resume/${documentId}/edit`); // Use navigate for routing
     } catch (error) {
       console.error("Failed to create document:", error);
       // You could add a toast or alert here to show the user that something went wrong

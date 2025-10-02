@@ -33,7 +33,7 @@ const ApplicationPage = () => {
     return counts;
   }, [applications]);
 
-  if (user?.role !== "interns") {
+  if (user?.role !== "CORPS_MEMBER" && user?.role !== "SIWES") {
     return <ApplicantList />;
   }
 

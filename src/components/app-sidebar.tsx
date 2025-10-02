@@ -7,6 +7,7 @@ import {
   LayoutPanelLeft,
   Settings,
   LogOut,
+  NotebookPen,
 } from "lucide-react";
 
 import {
@@ -48,7 +49,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate();
   const [logoutMutation, { isLoading }] = useLogoutMutation();
 
-  console.log(user?.role);
+  const isInternUser = user?.role === "CORPS_MEMBER" || user?.role === "SIWES";
+  const isStaffUser = user?.role === "STAFF";
 
   // Base menu items that are common for all users
   const baseItems = [
@@ -58,14 +60,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: LayoutPanelLeft,
     },
     {
-      title: user?.role !== "interns" ? "Create Job" : "Find Work",
-      url: user?.role !== "interns" ? "/create-job" : "/find-work",
+      title: !isInternUser ? "Create Job" : "Find Work",
+      url: !isInternUser ? "/create-job" : "/find-work",
       icon: BriefcaseBusiness,
     },
     {
-      title: user?.role !== "interns" ? "Applicants" : "Applications",
+      title: !isInternUser ? "Applicants" : "Applications",
       url: "/dashboard/applications",
       icon: Dock,
+    },
+    {
+      title: isInternUser || isStaffUser ? "Course" : "Approve Interns",
+      url: isInternUser || isStaffUser ? "/courses" : "/approve-interns",
+      icon: NotebookPen,
     },
     {
       title: "Settings",
@@ -75,18 +82,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   ];
 
   // Add Resume item only for non-staff users (job seekers)
-  const menuItems =
-    user?.role !== "interns"
-      ? baseItems
-      : [
-          ...baseItems.slice(0, 3), // Dashboard, Find Work, Applications
-          {
-            title: "Resume",
-            url: "/dashboard/resume",
-            icon: FileUser,
-          },
-          ...baseItems.slice(3), // Settings
-        ];
+  const menuItems = !isInternUser
+    ? baseItems
+    : [
+        ...baseItems.slice(0, 3), // Dashboard, Find Work, Applications
+        {
+          title: "Resume",
+          url: "/dashboard/resume",
+          icon: FileUser,
+        },
+        ...baseItems.slice(3), // Settings
+      ];
 
   const handleSignOut = async () => {
     try {
