@@ -19,7 +19,7 @@ const RegisterPage = () => {
           <img
             src="https://nitda.gov.ng/wp-content/uploads/2020/08/PHOTO-2020-08-08-08-10-33-1024x665.jpg"
             alt="Dashboard"
-            className="absolute top-0 right-0 w-full h-full object-cover"
+            className="top-0 right-0 w-full h-full object-cover absolute"
             style={{
               objectPosition: "right top",
               transform: "scale(1)",
