@@ -17,7 +17,7 @@ const LoginPage = () => {
       <div className="relative hidden bg-muted lg:block -mt-3">
         <div className="relative max-w-3xl h-full w-full overflow-hidden mt-3">
           <img
-            src="https://nairametrics.com/wp-content/uploads/2021/10/NYSC.jpg"
+            src="https://nitda.gov.ng/wp-content/uploads/2020/08/PHOTO-2020-08-08-08-10-33-1024x665.jpg"
             alt="Dashboard"
             className="absolute top-0 right-0 w-full h-full object-cover"
             style={{
