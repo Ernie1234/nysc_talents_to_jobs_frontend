@@ -34,7 +34,7 @@ const MoreOption = () => {
               ...resumeInfo,
               status: status,
             });
-            navigate(`/dashboard/`);
+            navigate(`/dashboard/resume`);
             toast.success("Success", {
               description: `Moved to trash successfully`,
             });

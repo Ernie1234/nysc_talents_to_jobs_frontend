@@ -2,7 +2,7 @@ import { Briefcase, Users, Edit3, type LucideIcon, Eye } from "lucide-react";
 import QuickCard from "./QuickCard";
 import { JobView } from "./JobView";
 import PostedJob from "./PostedJob";
-import { useGetEmployerAnalysisQuery } from "@/features/job/jobAPI";
+import { useGetStaffAnalysisQuery } from "@/features/job/jobAPI";
 
 interface QuickCardData {
   id: number;
@@ -12,12 +12,8 @@ interface QuickCardData {
   color?: string;
 }
 
-const EmployerDashboard = () => {
-  const {
-    data: analysisData,
-    isLoading,
-    error,
-  } = useGetEmployerAnalysisQuery();
+const StaffDashboard = () => {
+  const { data: analysisData, isLoading, error } = useGetStaffAnalysisQuery();
 
   console.log(analysisData);
 
@@ -108,4 +104,4 @@ const EmployerDashboard = () => {
   );
 };
 
-export default EmployerDashboard;
+export default StaffDashboard;

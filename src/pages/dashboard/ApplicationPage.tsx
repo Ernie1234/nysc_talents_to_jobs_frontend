@@ -1,7 +1,7 @@
 // pages/ApplicationPage.tsx
 import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import ApplicantList from "@/components/dashboard/employerDashboard/ApplicantList";
+import ApplicantList from "@/components/dashboard/StaffDashboard.tsx/ApplicantList";
 import Wrapper from "@/components/dashboard/Wrapper";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -33,7 +33,7 @@ const ApplicationPage = () => {
     return counts;
   }, [applications]);
 
-  if (user?.role !== "corps_member") {
+  if (user?.role !== "CORPS_MEMBER" && user?.role !== "SIWES") {
     return <ApplicantList />;
   }
 

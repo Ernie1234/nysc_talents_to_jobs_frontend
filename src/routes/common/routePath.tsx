@@ -24,6 +24,13 @@ export const PROTECTED_ROUTES = {
   FIND_WORK: "/find-work",
   JOB_DETAILS: "/find-work/:jobId",
   CREATE_JOB: "/create-job",
+
+  COURSES: "/courses",
+  APPROVE_INTERNS: "/approve-interns",
+  COURSES_DETAILS: "/courses/:courseId",
+  COURSES_ATTENDANCE: "/courses/:courseId/attendance",
+  COURSES_GENERATE_QR: "/courses/:courseId/generate-qr",
+  CREATE_COURSES: "/courses/create-course",
   RESUME: "/dashboard/resume",
   APPLICATIONS: "/dashboard/applications",
   EDIT_RESUME: "/dashboard/resume/:documentId/edit",

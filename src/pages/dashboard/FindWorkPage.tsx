@@ -16,11 +16,11 @@ type ViewMode = "list" | "grid";
 // Map API job data to JobCard props
 const mapJobToCardProps = (job: IJob) => ({
   jobId: job.id || job.id,
-  companyInitial: job.employerId?.firstName?.charAt(0) || "C",
+  companyInitial: job.staffId?.firstName?.charAt(0) || "C",
   jobTitle: job.title,
   companyName:
-    job.employerId?.companyName ||
-    `${job.employerId?.firstName} ${job.employerId?.lastName}`,
+    job.staffId?.companyName ||
+    `${job.staffId?.firstName} ${job.staffId?.lastName}`,
   location:
     job.hiringLocation.type === "state"
       ? job.hiringLocation.state || "Nationwide"
@@ -32,7 +32,6 @@ const mapJobToCardProps = (job: IJob) => ({
   experienceLevel: mapExperienceLevel(job.experienceLevel),
   jobStyle: mapWorkLocation(job.workLocation),
   isFeatured: job.viewCount > 50,
-  salaryRange: job.salaryRange,
   skills: job.skills,
   viewCounts: job.viewCount,
 });

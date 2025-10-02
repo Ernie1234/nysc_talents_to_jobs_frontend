@@ -11,13 +11,13 @@ import type {
 
 export const applicationApi = apiClient.injectEndpoints({
   endpoints: (builder) => ({
-    // Get employer's applications
-    getEmployerApplications: builder.query<
+    // Get staff's applications
+    getStaffApplications: builder.query<
       ApplicationsResponse,
       ApplicationQueryParams
     >({
       query: (params) => ({
-        url: "/applications/employer",
+        url: "/applications/staff",
         method: "GET",
         params: {
           status: params.status,
@@ -87,7 +87,7 @@ export const applicationApi = apiClient.injectEndpoints({
 });
 
 export const {
-  useGetEmployerApplicationsQuery,
+  useGetStaffApplicationsQuery,
   useGetApplicationAnalysisQuery,
   useGetApplicationQuery,
   useUpdateApplicationMutation,

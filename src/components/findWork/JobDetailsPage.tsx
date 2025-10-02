@@ -108,16 +108,6 @@ const JobDetailsPage = () => {
     }
   };
 
-  const formatSalary = (salary: {
-    min: number;
-    max: number;
-    currency: string;
-  }) => {
-    return `${
-      salary.currency
-    } ${salary.min.toLocaleString()} - ${salary.max.toLocaleString()}`;
-  };
-
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-0">
       <div className="">
@@ -144,7 +134,7 @@ const JobDetailsPage = () => {
                 <div className="flex items-start gap-4">
                   <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold text-xl">
-                      {job.employerId?.firstName?.charAt(0) || "C"}
+                      {job.staffId?.firstName?.charAt(0) || "C"}
                     </span>
                   </div>
                   <div>
@@ -155,8 +145,8 @@ const JobDetailsPage = () => {
                       <div className="flex items-center gap-1">
                         <Building className="h-4 w-4" />
                         <span>
-                          {job.employerId?.companyName ||
-                            `${job.employerId?.firstName} ${job.employerId?.lastName}`}
+                          {job.staffId?.companyName ||
+                            `${job.staffId?.firstName} ${job.staffId?.lastName}`}
                         </span>
                       </div>
                       <div className="flex items-center gap-1">
@@ -251,19 +241,6 @@ const JobDetailsPage = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Salary Information */}
-            {job.salaryRange?.isPublic && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Salary
-                </h3>
-                <p className="text-2xl font-bold text-gray-900">
-                  {formatSalary(job.salaryRange)}
-                </p>
-                <p className="text-sm text-gray-600 mt-1">Per year</p>
-              </div>
-            )}
-
             {/* Job Details */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -304,8 +281,8 @@ const JobDetailsPage = () => {
               jobId={jobId!}
               jobTitle={job.title}
               companyName={
-                job.employerId?.companyName ||
-                `${job.employerId?.firstName} ${job.employerId?.lastName}`
+                job.staffId?.companyName ||
+                `${job.staffId?.firstName} ${job.staffId?.lastName}`
               }
               className="w-full py-3 text-lg"
             />

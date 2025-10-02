@@ -26,6 +26,13 @@ export const apiClient = createApi({
     "Applications",
     "ApplicationAnalysis",
     "PublicJobs",
+    "Onboarding",
+    "User",
+    "Courses",
+    "QrSession",
+    "AdminApplications",
+    "AdminUsers",
+    "AdminStats",
   ], // Tag types for RTK Query
   endpoints: () => ({}), // Endpoints for RTK Query
 });

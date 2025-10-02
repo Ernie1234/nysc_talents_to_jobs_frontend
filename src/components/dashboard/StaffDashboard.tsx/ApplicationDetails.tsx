@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ApplicationStatusUpdate } from "./ApplicationStatusUpdate";
 import ApplicationResumePreview from "./ApplicationResumePreview";
 import { ApplicationResumePreviewFullModal } from "./ApplicationResumePreviewFull";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ApplicationDetailsProps {
   applicationId: string;
@@ -24,6 +25,7 @@ export const ApplicationDetails = ({
 }: ApplicationDetailsProps) => {
   const [isEditingStatus, setIsEditingStatus] = useState(false);
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
+  const { user } = useAuth();
 
   const {
     data: applicationData,
@@ -79,6 +81,8 @@ export const ApplicationDetails = ({
       </div>
     );
   }
+
+  console.log("Applicant Data:", application);
 
   return (
     <div className="min-h-screen bg-gray-50/30 p-5 md:p-0">
@@ -209,13 +213,15 @@ export const ApplicationDetails = ({
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   Application Status
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsEditingStatus(!isEditingStatus)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
+                  {user?.role === "ADMIN" && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsEditingStatus(!isEditingStatus)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent>

@@ -24,10 +24,6 @@ export const useJobForm = () => {
       skills: [],
       aboutJob: "",
       jobRequirements: "",
-      salaryRange: {
-        min: 200,
-        max: 800,
-      },
       hiringLocation: {
         type: "nation-wide",
         state: "",
@@ -51,12 +47,6 @@ export const useJobForm = () => {
         skills: data.skills,
         aboutJob: data.aboutJob,
         requirements: data.jobRequirements,
-        salaryRange: {
-          min: data.salaryRange.min,
-          max: data.salaryRange.max,
-          currency: "NGN",
-          isPublic: true,
-        },
         hiringLocation: data.hiringLocation,
         status: status,
       };

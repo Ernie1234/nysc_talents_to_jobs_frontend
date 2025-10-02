@@ -56,7 +56,7 @@ const JobItem = ({ job }: JobItemProps) => {
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center">
               <span className="text-white font-bold text-lg">
-                {job.employerId.firstName.charAt(0).toUpperCase()}
+                {job.staffId.firstName.charAt(0).toUpperCase()}
               </span>
             </div>
           )}

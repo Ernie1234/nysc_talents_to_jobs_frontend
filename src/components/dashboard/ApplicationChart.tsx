@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import * as React from "react";
-import { Pie, PieChart, Cell, Tooltip, ResponsiveContainer } from "recharts";
-
+// src/components/dashboard/SkillsChart.tsx
 import {
   Card,
   CardContent,
@@ -9,208 +6,163 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { PolarGrid, PolarAngleAxis, PolarRadiusAxis } from "recharts";
+import { Radar, RadarChart, ResponsiveContainer } from "recharts";
 
-const statusData = [
-  { status: "pending", count: 186, color: "hsl(45, 93%, 47%)" },
-  { status: "in review", count: 305, color: "hsl(217, 91%, 60%)" },
-  { status: "interview", count: 237, color: "hsl(262, 83%, 58%)" },
-  { status: "processing", count: 173, color: "hsl(142, 76%, 36%)" },
-  { status: "accepted", count: 209, color: "hsl(142, 72%, 29%)" },
-  { status: "rejected", count: 142, color: "hsl(0, 84%, 60%)" },
-];
+interface Skill {
+  name: string;
+  level: number;
+  _id?: string;
+}
 
-const statusLabels = {
-  pending: "Pending",
-  "in review": "In Review",
-  interview: "Interview",
-  processing: "Processing",
-  accepted: "Accepted",
-  rejected: "Rejected",
+interface SkillsRadarChartProps {
+  skills: Skill[];
+}
+
+const levelLabels = {
+  1: "Beginner",
+  2: "Basic",
+  3: "Intermediate",
+  4: "Advanced",
+  5: "Expert",
 };
 
-// Custom tooltip component
-const CustomTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
-    const percentage = (
-      (data.count / statusData.reduce((sum, item) => sum + item.count, 0)) *
-      100
-    ).toFixed(1);
+export function SkillsRadarChart({ skills }: SkillsRadarChartProps) {
+  // Transform skills data for radar chart
+  const chartData = skills.map((skill) => ({
+    subject: skill.name,
+    level: skill.level,
+    fullMark: 5,
+    percentage: (skill.level / 5) * 100,
+  }));
 
-    return (
-      <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-        <p className="font-medium">
-          {statusLabels[data.status as keyof typeof statusLabels]}
-        </p>
-        <p className="text-sm text-gray-600">Count: {data.count}</p>
-        <p className="text-sm text-gray-600">Percentage: {percentage}%</p>
-      </div>
-    );
-  }
-  return null;
-};
-
-export function ApplicationChart() {
-  const [activeIndex, setActiveIndex] = React.useState(0);
-
-  const totalApplications = statusData.reduce(
-    (sum, item) => sum + item.count,
-    0
-  );
-  const activeData = statusData[activeIndex];
-  const acceptedCount =
-    statusData.find((item) => item.status === "accepted")?.count || 0;
-  const rejectedCount =
-    statusData.find((item) => item.status === "rejected")?.count || 0;
-  const successRate =
-    totalApplications > 0
-      ? ((acceptedCount / totalApplications) * 100).toFixed(1)
-      : "0";
-
-  const onPieEnter = (_: any, index: number) => {
-    setActiveIndex(index);
-  };
+  const averageSkillLevel =
+    skills.length > 0
+      ? skills.reduce((sum, skill) => sum + skill.level, 0) / skills.length
+      : 0;
 
   return (
     <Card className="flex flex-col">
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle>Application Status</CardTitle>
+            <CardTitle>Skills Radar</CardTitle>
             <CardDescription>
-              Total applications: {totalApplications.toLocaleString()}
+              Visual representation of your skill levels
             </CardDescription>
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold text-green-600">
-              {successRate}%
+              {averageSkillLevel.toFixed(1)}
             </div>
-            <div className="text-xs text-gray-500">Success Rate</div>
+            <div className="text-xs text-gray-500">Avg. Level</div>
           </div>
         </div>
       </CardHeader>
 
       <CardContent className="flex-1">
         <div className="flex flex-col items-center gap-6">
-          <div className="w-full h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Tooltip content={<CustomTooltip />} />
-                <Pie
-                  data={statusData}
+          {/* Radar Chart with shadcn ChartContainer */}
+          <div className="w-full h-[300px]">
+            <ChartContainer
+              config={{
+                level: {
+                  label: "Skill Level",
+                  color: "hsl(142, 76%, 36%)",
+                },
+              }}
+              className="h-full w-full"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={2}
-                  dataKey="count"
-                  nameKey="status"
-                  onMouseEnter={onPieEnter}
-                  //   activeIndex={activeIndex}
-                  activeShape={(props: any) => {
-                    const { cx, cy, outerRadius, startAngle, endAngle, fill } =
-                      props;
-                    return (
-                      <g>
-                        <path
-                          d={`
-                            M ${cx},${cy}
-                            L ${
-                              cx +
-                              Math.cos((startAngle * Math.PI) / 180) *
-                                outerRadius
-                            },${
-                            cy +
-                            Math.sin((startAngle * Math.PI) / 180) * outerRadius
-                          }
-                            A ${outerRadius},${outerRadius} 0 0,1 ${
-                            cx +
-                            Math.cos((endAngle * Math.PI) / 180) * outerRadius
-                          },${
-                            cy +
-                            Math.sin((endAngle * Math.PI) / 180) * outerRadius
-                          }
-                            Z
-                          `}
-                          fill={fill}
-                        />
-                        <text
-                          x={cx}
-                          y={cy}
-                          dy={-10}
-                          textAnchor="middle"
-                          fill="#333"
-                          className="font-bold text-lg"
-                        >
-                          {activeData.count}
-                        </text>
-                        <text
-                          x={cx}
-                          y={cy}
-                          dy={10}
-                          textAnchor="middle"
-                          fill="#666"
-                          className="text-sm"
-                        >
-                          {
-                            statusLabels[
-                              activeData.status as keyof typeof statusLabels
-                            ]
-                          }
-                        </text>
-                      </g>
-                    );
-                  }}
+                  outerRadius="80%"
+                  data={chartData}
                 >
-                  {statusData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="subject" />
+                  <PolarRadiusAxis angle={30} domain={[0, 5]} />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        labelKey="subject"
+                        nameKey="level"
+                        formatter={(value, name) => {
+                          if (name === "level") {
+                            const level = Number(value);
+                            return [
+                              `${level} - ${
+                                levelLabels[level as keyof typeof levelLabels]
+                              }`,
+                              "Level",
+                            ];
+                          }
+                          return [String(value), name];
+                        }}
+                      />
+                    }
+                  />
+                  <Radar
+                    name="level"
+                    dataKey="level"
+                    stroke="hsl(142, 76%, 36%)"
+                    fill="hsl(142, 76%, 36%)"
+                    fillOpacity={0.6}
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
+            </ChartContainer>
           </div>
 
-          {/* Statistics */}
-          <div className="grid grid-cols-3 gap-4 w-full max-w-md text-center">
-            <div className="p-3 bg-green-50 rounded-lg">
-              <div className="text-2xl font-bold text-green-600">
-                {acceptedCount}
+          {/* Skill Summary */}
+          <div className="grid grid-cols-2 gap-4 w-full max-w-md">
+            <div className="text-center p-3 bg-gray-50 rounded-lg">
+              <div className="text-lg font-bold text-gray-700">
+                {skills.length}
               </div>
-              <div className="text-xs text-green-600">Accepted</div>
+              <div className="text-xs text-gray-500">Total Skills</div>
             </div>
-            <div className="p-3 bg-red-50 rounded-lg">
-              <div className="text-2xl font-bold text-red-600">
-                {rejectedCount}
+            <div className="text-center p-3 bg-green-50 rounded-lg">
+              <div className="text-lg font-bold text-green-600">
+                {Math.round((averageSkillLevel / 5) * 100)}%
               </div>
-              <div className="text-xs text-red-600">Rejected</div>
-            </div>
-            <div className="p-3 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">
-                {totalApplications - acceptedCount - rejectedCount}
-              </div>
-              <div className="text-xs text-blue-600">In Progress</div>
+              <div className="text-xs text-green-600">Avg. Proficiency</div>
             </div>
           </div>
 
-          {/* Legend */}
-          <div className="grid grid-cols-2 gap-3 w-full max-w-md">
-            {statusData.map((item) => (
-              <div
-                key={item.status}
-                className="flex items-center gap-2 text-sm p-2"
-              >
-                <span
-                  className="w-3 h-3 rounded-xs flex-shrink-0"
-                  style={{ backgroundColor: item.color }}
-                />
-                <span className="font-medium flex-1">
-                  {statusLabels[item.status as keyof typeof statusLabels]}
-                </span>
-                <span className="text-muted-foreground font-semibold">
-                  {item.count}
-                </span>
-              </div>
-            ))}
+          {/* Top Skills */}
+          <div className="w-full">
+            <h4 className="text-sm font-semibold mb-3">Top Skills</h4>
+            <div className="space-y-2">
+              {skills
+                .sort((a, b) => b.level - a.level)
+                .slice(0, 5)
+                .map((skill) => (
+                  <div
+                    key={skill._id}
+                    className="flex items-center justify-between"
+                  >
+                    <span className="text-sm font-medium">{skill.name}</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-20 bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${(skill.level / 5) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-gray-500 w-8">
+                        {skill.level}/5
+                      </span>
+                    </div>
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
       </CardContent>

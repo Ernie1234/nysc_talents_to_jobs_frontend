@@ -20,8 +20,8 @@ export const jobApi = apiClient.injectEndpoints({
       invalidatesTags: ["Jobs", "PublicJobs"],
     }),
 
-    // Get employer's jobs
-    getEmployerJobs: builder.query<JobsResponse, JobQueryParams>({
+    // Get staff's jobs
+    getStaffJobs: builder.query<JobsResponse, JobQueryParams>({
       query: (params) => ({
         url: "/jobs",
         method: "GET",
@@ -102,7 +102,7 @@ export const jobApi = apiClient.injectEndpoints({
       }),
       invalidatesTags: ["Jobs"],
     }),
-    getEmployerAnalysis: builder.query<AnalysisResponse, void>({
+    getStaffAnalysis: builder.query<AnalysisResponse, void>({
       query: () => ({
         url: "/jobs/analysis",
         method: "GET",
@@ -170,13 +170,13 @@ export const jobApi = apiClient.injectEndpoints({
 
 export const {
   useCreateJobMutation,
-  useGetEmployerJobsQuery,
+  useGetStaffJobsQuery,
   useGetJobQuery,
   useUpdateJobMutation,
   usePublishJobMutation,
   useCloseJobMutation,
   useDeleteJobMutation,
-  useGetEmployerAnalysisQuery,
+  useGetStaffAnalysisQuery,
   useGetPublicJobsQuery,
   useGetPublicJobDetailsQuery,
   useUpdateJobViewCountMutation,
