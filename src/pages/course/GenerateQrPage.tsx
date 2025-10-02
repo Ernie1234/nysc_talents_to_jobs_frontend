@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, QrCode, Copy, CheckCircle, Download } from "lucide-react";
+import { ArrowLeft, QrCode, CheckCircle } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react"; // Use named import instead of default
 
 import { Button } from "@/components/ui/button";
@@ -26,7 +27,6 @@ const GenerateQrPage = () => {
   const [duration, setDuration] = useState<number>(15);
   const [generatedQr, setGeneratedQr] = useState<any>(null);
   const [timeLeft, setTimeLeft] = useState<number>(0);
-  const [copied, setCopied] = useState(false);
 
   console.log("Generated QR page - Course ID:", courseId);
   console.log("Generated QR page - Generated QR:", generatedQr);
@@ -84,70 +84,6 @@ const GenerateQrPage = () => {
     }
   };
 
-  const copyToClipboard = async () => {
-    if (generatedQr?.qrData) {
-      try {
-        await navigator.clipboard.writeText(generatedQr.qrData);
-        setCopied(true);
-        toast.success("QR data copied to clipboard!");
-        setTimeout(() => setCopied(false), 2000);
-      } catch (err) {
-        toast.error("Failed to copy to clipboard", {
-          description: (err as Error).message,
-        });
-      }
-    }
-  };
-
-  const downloadQRCode = () => {
-    if (generatedQr?.qrData) {
-      // Create a canvas element to render the QR code
-      const canvas = document.createElement("canvas");
-      const size = 256;
-      canvas.width = size;
-      canvas.height = size;
-
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        // Create a temporary SVG element to render the QR code
-        const svg = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "svg"
-        );
-        svg.setAttribute("width", size.toString());
-        svg.setAttribute("height", size.toString());
-
-        // Create QR code using the same props as QRCodeSVG
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const qrSvg = (
-          <QRCodeSVG
-            value={generatedQr.qrData}
-            size={size}
-            level="H"
-            includeMargin
-            fgColor="#000000"
-            bgColor="#ffffff"
-          />
-        );
-
-        // For now, we'll create a simple download using the session code
-        // In a real implementation, you might want to use a library like html-to-image
-        const downloadLink = document.createElement("a");
-        downloadLink.href = `data:text/plain;charset=utf-8,${encodeURIComponent(
-          `QR Code for ${course?.title}\nSession: ${
-            generatedQr.qrSession.sessionCode
-          }\nExpires: ${new Date(generatedQr.expiresAt).toLocaleString()}`
-        )}`;
-        downloadLink.download = `qr-code-${generatedQr.qrSession.sessionCode}.txt`;
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-
-        toast.success("QR code details downloaded!");
-      }
-    }
-  };
-
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -155,13 +91,6 @@ const GenerateQrPage = () => {
   };
 
   // Generate a scan URL that students can use
-  const getScanUrl = () => {
-    if (generatedQr?.qrData) {
-      // You can create a dedicated scan page or use your app's URL structure
-      return `${window.location.origin}/scan-attendance?code=${generatedQr.qrSession.sessionCode}`;
-    }
-    return "";
-  };
 
   if (courseLoading) {
     return <QrSkeleton />;
@@ -323,7 +252,7 @@ const GenerateQrPage = () => {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-2">
+                  {/* <div className="flex gap-2">
                     <Button
                       onClick={downloadQRCode}
                       variant="outline"
@@ -349,17 +278,17 @@ const GenerateQrPage = () => {
                         </>
                       )}
                     </Button>
-                  </div>
+                  </div> */}
 
                   {/* Scan URL for easy sharing */}
-                  <div className="p-3 bg-gray-50 rounded-lg">
+                  {/* <div className="p-3 bg-gray-50 rounded-lg">
                     <p className="text-sm text-gray-600 mb-2 text-center">
                       Scan URL (for manual entry):
                     </p>
                     <code className="text-xs bg-white p-2 rounded border block text-center break-all">
                       {getScanUrl()}
                     </code>
-                  </div>
+                  </div> */}
                 </div>
               </>
             ) : (
