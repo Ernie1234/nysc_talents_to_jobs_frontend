@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   QrCode,
   Camera,
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useScanQrAttendanceMutation } from "@/features/courses/courseAPI";
-import { Scanner as QrScannerLibrary } from "@yudiel/react-qr-scanner";
+import { Html5QrcodeScanner } from "html5-qrcode";
 
 interface ScannerProps {
   onScanComplete?: () => void;
@@ -34,6 +34,8 @@ export const ScannerComponent = ({ onScanComplete }: ScannerProps) => {
   const [showManualInput, setShowManualInput] = useState(false);
   const [manualCode, setManualCode] = useState("");
   const [scanQrAttendance] = useScanQrAttendanceMutation();
+  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+  const scannerContainerRef = useRef<HTMLDivElement>(null);
 
   // Check for camera availability
   useEffect(() => {
@@ -59,6 +61,34 @@ export const ScannerComponent = ({ onScanComplete }: ScannerProps) => {
       setIsScanning(true);
       setScanResult(null);
       setShowManualInput(false);
+
+      // Initialize scanner after a brief delay to ensure DOM is ready
+      setTimeout(() => {
+        if (scannerContainerRef.current && !scannerRef.current) {
+          scannerRef.current = new Html5QrcodeScanner(
+            "qr-scanner-container",
+            {
+              fps: 10,
+              qrbox: { width: 250, height: 250 },
+              supportedScanTypes: [],
+            },
+            false
+          );
+
+          scannerRef.current.render(
+            (decodedText: string) => {
+              console.log("QR Code detected:", decodedText);
+              processQrCode(decodedText);
+            },
+            (error: string) => {
+              // Don't log every scan error - it's normal during scanning
+              if (!error.includes("No MultiFormat Readers")) {
+                console.error("QR Scanner error:", error);
+              }
+            }
+          );
+        }
+      }, 100);
     } catch (error) {
       console.error("Error starting camera:", error);
       toast.error("Cannot access camera. Please check permissions.");
@@ -67,11 +97,18 @@ export const ScannerComponent = ({ onScanComplete }: ScannerProps) => {
   };
 
   const stopCamera = () => {
+    if (scannerRef.current) {
+      scannerRef.current.clear().catch(console.error);
+      scannerRef.current = null;
+    }
     setIsScanning(false);
   };
 
   const processQrCode = async (sessionCode: string) => {
     try {
+      // Stop scanning immediately when a QR code is detected
+      stopCamera();
+
       // Validate session code format
       if (!sessionCode || sessionCode.trim().length === 0) {
         throw new Error("Invalid session code");
@@ -94,8 +131,10 @@ export const ScannerComponent = ({ onScanComplete }: ScannerProps) => {
           longitude: position.coords.longitude,
         };
       } catch (geoError) {
-        console.log("Location not available, proceeding without location data");
-        console.log(geoError);
+        console.log(
+          "Location not available, proceeding without location data",
+          geoError
+        );
         // Don't show error for location - it's optional
       }
 
@@ -113,7 +152,6 @@ export const ScannerComponent = ({ onScanComplete }: ScannerProps) => {
 
       // Auto close after success
       setTimeout(() => {
-        stopCamera();
         setScanResult(null);
         setShowManualInput(false);
       }, 3000);
@@ -123,7 +161,10 @@ export const ScannerComponent = ({ onScanComplete }: ScannerProps) => {
       setScanResult({ success: false, message: errorMessage });
       toast.error(errorMessage);
 
-      // Don't stop camera on error - let user try again
+      // Allow user to try again
+      setTimeout(() => {
+        setScanResult(null);
+      }, 3000);
     }
   };
 
@@ -136,17 +177,14 @@ export const ScannerComponent = ({ onScanComplete }: ScannerProps) => {
     await processQrCode(manualCode);
   };
 
-  const handleQrScan = (result: string) => {
-    if (result && isScanning) {
-      console.log("QR Code detected:", result);
-      processQrCode(result);
-    }
-  };
-
-  const handleQrError = (error: any) => {
-    console.error("QR Scanner error:", error);
-    // Don't show error toast for every scan failure - it's normal
-  };
+  // Clean up scanner on unmount
+  useEffect(() => {
+    return () => {
+      if (scannerRef.current) {
+        scannerRef.current.clear().catch(console.error);
+      }
+    };
+  }, []);
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -179,6 +217,7 @@ export const ScannerComponent = ({ onScanComplete }: ScannerProps) => {
                 placeholder="Enter session code"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 autoFocus
+                autoComplete="off"
               />
             </div>
             <div className="flex space-x-2">
@@ -189,7 +228,10 @@ export const ScannerComponent = ({ onScanComplete }: ScannerProps) => {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setShowManualInput(false)}
+                onClick={() => {
+                  setShowManualInput(false);
+                  setManualCode("");
+                }}
                 className="flex-1"
               >
                 Cancel
@@ -200,19 +242,10 @@ export const ScannerComponent = ({ onScanComplete }: ScannerProps) => {
 
         {isScanning && hasCamera && (
           <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
-            <QrScannerLibrary
-              onScan={(result: any) => handleQrScan(result)}
-              onError={(error) => handleQrError(error)}
-              constraints={{
-                facingMode: "environment",
-              }}
-              scanDelay={500}
-              styles={{
-                container: {
-                  width: "100%",
-                  height: "100%",
-                },
-              }}
+            <div
+              id="qr-scanner-container"
+              ref={scannerContainerRef}
+              className="w-full h-full"
             />
             {/* Scanner overlay */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
