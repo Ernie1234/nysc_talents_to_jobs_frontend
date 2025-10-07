@@ -6,7 +6,7 @@ import type {
   CoursesResponse,
   CreateCourseRequest,
   QrSessionResponse,
-} from "./courseTypes";
+} from "./courseTypes.tsx";
 
 export const courseApi = apiClient.injectEndpoints({
   endpoints: (builder) => ({
@@ -40,7 +40,7 @@ export const courseApi = apiClient.injectEndpoints({
       providesTags: ["Courses"],
     }),
 
-    // Get all published courses (For Corps members)
+    // Get all published courses (For Interns members)
     // In your courseAPI.ts - this should now work
     getPublishedCourses: builder.query<CoursesResponse, any>({
       query: (params = {}) => {
@@ -84,7 +84,7 @@ export const courseApi = apiClient.injectEndpoints({
       ],
     }),
 
-    // Enroll in a course (Corps members only)
+    // Enroll in a course (Interns members only)
     enrollCourse: builder.mutation<CourseResponse, string>({
       query: (courseId) => ({
         url: `/courses/${courseId}/enroll`,
@@ -109,7 +109,7 @@ export const courseApi = apiClient.injectEndpoints({
       invalidatesTags: ["Courses"],
     }),
 
-    // Scan QR attendance (Corps members only)
+    // Scan QR attendance (Interns members only)
     scanQrAttendance: builder.mutation<
       CourseResponse,
       { sessionCode: string; location?: any }
@@ -130,6 +130,43 @@ export const courseApi = apiClient.injectEndpoints({
       }),
       providesTags: ["Courses"],
     }),
+
+    // Drop a course (Interns members only)
+    dropCourse: builder.mutation<CourseResponse, string>({
+      query: (courseId) => ({
+        url: `/courses/${courseId}/drop`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Courses"],
+    }),
+
+    // Get current enrollment (Interns members only)
+    getCurrentEnrollment: builder.query<CourseResponse, void>({
+      query: () => ({
+        url: "/courses/enrollment/current",
+        method: "GET",
+      }),
+      providesTags: ["Courses"],
+    }),
+
+    // Check clearance eligibility
+    checkClearanceEligibility: builder.query<any, string>({
+      query: (courseId) => ({
+        url: `/courses/${courseId}/clearance/check`,
+        method: "GET",
+      }),
+      providesTags: ["Courses"],
+    }),
+
+    // Generate performance clearance PDF
+    generateClearance: builder.mutation<Blob, string>({
+      query: (courseId) => ({
+        url: `/courses/${courseId}/clearance/download`,
+        method: "GET",
+        responseHandler: (response) => response.blob(),
+      }),
+      invalidatesTags: ["Courses"],
+    }),
   }),
 });
 
@@ -143,4 +180,8 @@ export const {
   useGenerateQrSessionMutation,
   useScanQrAttendanceMutation,
   useGetCourseAttendanceQuery,
+  useDropCourseMutation,
+  useGetCurrentEnrollmentQuery,
+  useCheckClearanceEligibilityQuery,
+  useGenerateClearanceMutation,
 } = courseApi;

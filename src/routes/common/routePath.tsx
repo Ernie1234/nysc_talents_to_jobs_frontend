@@ -27,6 +27,7 @@ export const PROTECTED_ROUTES = {
 
   COURSES: "/courses",
   APPROVE_INTERNS: "/approve-interns",
+  DOCUMENT_REVIEW: "/document-review",
   COURSES_DETAILS: "/courses/:courseId",
   COURSES_ATTENDANCE: "/courses/:courseId/attendance",
   COURSES_GENERATE_QR: "/courses/:courseId/generate-qr",

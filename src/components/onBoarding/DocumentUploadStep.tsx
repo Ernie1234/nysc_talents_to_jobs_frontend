@@ -32,22 +32,53 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
     const file = event.target.files?.[0];
     if (!file) return;
 
+    // Validate file type
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Please select a PDF, JPEG, or PNG file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB');
+      return;
+    }
+
     setUploading(true);
 
-    // Simulate file upload
-    setTimeout(() => {
+    try {
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('fileType', user?.role === "CORPS_MEMBER" ? "ppa_letter" : "request_letter");
+      
+      // TODO: Replace with your actual file upload API endpoint
+      // const response = await fetch('/api/upload-document', {
+      //   method: 'POST',
+      //   body: formData,
+      //   headers: {
+      //     'Authorization': `Bearer ${token}` // Add your auth token
+      //   }
+      // });
+      // const result = await response.json();
+      
+      // For now, simulate the upload
       const newDoc = {
         fileName: file.name,
-        fileUrl: URL.createObjectURL(file),
-        fileType:
-          user?.role === "CORPS_MEMBER" ? "ppa_letter" : "request_letter",
+        fileUrl: URL.createObjectURL(file), // Replace with actual uploaded URL from backend
+        fileType: user?.role === "CORPS_MEMBER" ? "ppa_letter" : "request_letter" as "ppa_letter" | "request_letter",
         fileSize: file.size,
-        uploadedAt: new Date().toISOString(), // Send as ISO string
+        uploadedAt: new Date().toISOString(),
       };
 
       setDocuments([newDoc]);
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert('Upload failed. Please try again.');
+    } finally {
       setUploading(false);
-    }, 1000);
+    }
   };
 
   const handleSubmit = () => {

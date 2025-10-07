@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import { Search, Users, Clock, BookOpen } from "lucide-react";
+import { Search, Users, Clock, BookOpen, AlertCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,52 +13,48 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
-import {
-  useEnrollCourseMutation,
-  useGetPublishedCoursesQuery,
-} from "@/features/courses/courseAPI";
 import { useNavigate } from "react-router-dom";
+import { useEnrollment } from "@/hooks/useEnrollment";
+import { useGetPublishedCoursesQuery } from "@/features/courses/courseAPI";
 
 const CourseCatalogPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
-  const [enrollCourse, { isLoading: enrollLoading }] =
-    useEnrollCourseMutation();
+
+  const { currentEnrollment, enrollLoading, handleEnroll } = useEnrollment();
 
   const {
     data: coursesData,
     isLoading,
     error,
-    refetch,
+    refetch: refetchCourses,
   } = useGetPublishedCoursesQuery({
     search: searchTerm || undefined,
   });
 
   const courses = coursesData?.data?.courses || [];
 
-  const handleEnroll = async (courseId: string) => {
-    if (!user) {
-      toast.error("Please log in to enroll in courses");
-      return;
-    }
-
-    try {
-      await enrollCourse(courseId).unwrap();
-      toast.success("Successfully enrolled in course!");
-      refetch(); // Refresh the course list
-    } catch (error: any) {
-      console.error("Enroll error:", error);
-      toast.error(error?.data?.message || "Failed to enroll in course");
+  const handleEnrollClick = async (courseId: string, courseTitle: string) => {
+    const success = await handleEnroll(courseId, courseTitle);
+    if (success) {
+      refetchCourses(); // Refresh the course list
     }
   };
 
-  const isEnrolled = (course: any) => {
+  const isEnrolledInCourse = (course: any) => {
     return course.enrolledStudents.some(
       (student: any) => student.id === user?.id
     );
+  };
+
+  const canEnroll = (course: any) => {
+    // User can enroll if:
+    // 1. They are not enrolled in this specific course
+    // 2. They don't have any current enrollment
+    return !isEnrolledInCourse(course) && !currentEnrollment;
   };
 
   if (error) {
@@ -91,6 +87,25 @@ const CourseCatalogPage = () => {
         </p>
       </div>
 
+      {/* Current Enrollment Alert */}
+      {currentEnrollment && (
+        <Alert className="mb-6 bg-blue-50 border-blue-200">
+          <AlertCircle className="h-4 w-4 text-blue-600" />
+          <AlertDescription className="text-blue-800">
+            You are currently enrolled in{" "}
+            <strong>"{currentEnrollment.title}"</strong>. You must drop this
+            course before enrolling in a new one.{" "}
+            <Button
+              variant="outline"
+              className="p-0 h-auto text-blue-600 font-semibold"
+              onClick={() => navigate(`/courses/${currentEnrollment.id}`)}
+            >
+              View your current course
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Search */}
       <div className="max-w-md mx-auto mb-8">
         <div className="relative">
@@ -114,23 +129,33 @@ const CourseCatalogPage = () => {
       ) : courses.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {courses.map((course) => {
-            const enrolled = isEnrolled(course);
+            const enrolledInThisCourse = isEnrolledInCourse(course);
+            const canEnrollInThisCourse = canEnroll(course);
 
             return (
               <Card
                 key={course._id}
-                className="hover:shadow-xl transition-all duration-300"
-                onClick={() => navigate(`/courses/${course._id}/attendance`)}
+                className="hover:shadow-xl transition-all duration-300 cursor-pointer"
+                onClick={() => navigate(`/courses/${course._id}`)}
               >
-                {course.coverImage && (
-                  <div className="h-48 overflow-hidden rounded-t-lg">
-                    <img
-                      src={course.coverImage}
-                      alt={course.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
+                <div className="h-48 overflow-hidden rounded-t-lg">
+                  <img
+                    src={
+                      course.coverImage ??
+                      (course.coverImage ||
+                        "https://foundr.com/wp-content/uploads/2023/04/How-to-create-an-online-course.jpg")
+                    }
+                    alt={course.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src =
+                        "https://foundr.com/wp-content/uploads/2023/04/How-to-create-an-online-course.jpg";
+                    }}
+                    loading="lazy"
+                  />
+                </div>
+
                 <CardHeader className={course.coverImage ? "" : "pt-6"}>
                   <CardTitle className="text-xl line-clamp-2">
                     {course.title}
@@ -163,18 +188,35 @@ const CourseCatalogPage = () => {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <Badge variant={enrolled ? "default" : "secondary"}>
-                      {enrolled ? "Enrolled" : "Available"}
+                    <Badge
+                      variant={
+                        enrolledInThisCourse
+                          ? "default"
+                          : !canEnrollInThisCourse
+                          ? "secondary"
+                          : "outline"
+                      }
+                    >
+                      {enrolledInThisCourse
+                        ? "Enrolled"
+                        : !canEnrollInThisCourse
+                        ? "Already Enrolled Elsewhere"
+                        : "Available"}
                     </Badge>
                     <Button
-                      onClick={() => handleEnroll(course._id)}
-                      disabled={enrolled || enrollLoading}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEnrollClick(course._id, course.title);
+                      }}
+                      disabled={!canEnrollInThisCourse || enrollLoading}
                       size="sm"
                     >
                       {enrollLoading
                         ? "Enrolling..."
-                        : enrolled
+                        : enrolledInThisCourse
                         ? "Enrolled"
+                        : !canEnrollInThisCourse
+                        ? "Already Enrolled"
                         : "Enroll Now"}
                     </Button>
                   </div>

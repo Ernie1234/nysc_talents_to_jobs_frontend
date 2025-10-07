@@ -98,3 +98,14 @@ export interface AttendanceResponse {
     }>;
   };
 }
+
+export interface ClearanceEligibilityResponse {
+  success: boolean;
+  message: string;
+  data: {
+    eligible: boolean;
+    attendanceRate: number;
+    requiredRate: number;
+    message: string;
+  };
+}
