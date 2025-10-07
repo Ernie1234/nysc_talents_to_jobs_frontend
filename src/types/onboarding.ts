@@ -17,7 +17,7 @@ export interface PersonalInfo {
 export interface Document {
   fileName: string;
   fileUrl: string;
-  fileType: "posting_letter" | "placement_letter" | "resume" | "other";
+  fileType: "ppa_letter" | "request_letter";
   fileSize: number;
   uploadedAt: Date;
 }

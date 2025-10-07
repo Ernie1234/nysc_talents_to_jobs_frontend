@@ -1,31 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// components/qr-scanner.tsx
-import { useState, useRef, useEffect } from "react";
-import { QrCode, Camera, CameraOff, CheckCircle, XCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import {
+  QrCode,
+  Camera,
+  CameraOff,
+  CheckCircle,
+  XCircle,
+  Key,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useScanQrAttendanceMutation } from "@/features/courses/courseAPI";
+import { Scanner as QrScannerLibrary } from "@yudiel/react-qr-scanner";
 
 interface ScannerProps {
   onScanComplete?: () => void;
 }
 
-export const QrScanner = ({ onScanComplete }: ScannerProps) => {
+export const ScannerComponent = ({ onScanComplete }: ScannerProps) => {
   const [isScanning, setIsScanning] = useState(false);
   const [hasCamera, setHasCamera] = useState(true);
   const [scanResult, setScanResult] = useState<{
     success: boolean;
     message: string;
   } | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
+  const [showManualInput, setShowManualInput] = useState(false);
+  const [manualCode, setManualCode] = useState("");
   const [scanQrAttendance] = useScanQrAttendanceMutation();
 
   // Check for camera availability
@@ -47,17 +54,11 @@ export const QrScanner = ({ onScanComplete }: ScannerProps) => {
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
-      streamRef.current = stream;
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-
+      // Check camera permissions first
+      await navigator.mediaDevices.getUserMedia({ video: true });
       setIsScanning(true);
       setScanResult(null);
+      setShowManualInput(false);
     } catch (error) {
       console.error("Error starting camera:", error);
       toast.error("Cannot access camera. Please check permissions.");
@@ -66,22 +67,16 @@ export const QrScanner = ({ onScanComplete }: ScannerProps) => {
   };
 
   const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-    }
     setIsScanning(false);
-  };
-
-  const handleManualCode = async () => {
-    const sessionCode = prompt("Enter the session code:");
-    if (sessionCode) {
-      await processQrCode(sessionCode);
-    }
   };
 
   const processQrCode = async (sessionCode: string) => {
     try {
+      // Validate session code format
+      if (!sessionCode || sessionCode.trim().length === 0) {
+        throw new Error("Invalid session code");
+      }
+
       // Get user's current location (optional)
       let location = undefined;
       try {
@@ -99,14 +94,13 @@ export const QrScanner = ({ onScanComplete }: ScannerProps) => {
           longitude: position.coords.longitude,
         };
       } catch (geoError) {
-        toast.error(
-          geoError instanceof Error ? geoError.message : "Location error"
-        );
         console.log("Location not available, proceeding without location data");
+        console.log(geoError);
+        // Don't show error for location - it's optional
       }
 
       const result = await scanQrAttendance({
-        sessionCode,
+        sessionCode: sessionCode.trim(),
         location,
       }).unwrap();
 
@@ -121,23 +115,37 @@ export const QrScanner = ({ onScanComplete }: ScannerProps) => {
       setTimeout(() => {
         stopCamera();
         setScanResult(null);
+        setShowManualInput(false);
       }, 3000);
     } catch (error: any) {
       const errorMessage =
-        error?.data?.message || "Failed to record attendance";
+        error?.data?.message || error?.message || "Failed to record attendance";
       setScanResult({ success: false, message: errorMessage });
       toast.error(errorMessage);
+
+      // Don't stop camera on error - let user try again
     }
   };
 
-  // Simulate QR code scanning (you can integrate a real QR scanner library like html5-qrcode)
-  const simulateQrScan = () => {
-    // For demo purposes - in real app, use a QR scanner library
-    const demoCode = `SESSION_${Math.random()
-      .toString(36)
-      .substr(2, 8)
-      .toUpperCase()}`;
-    processQrCode(demoCode);
+  const handleManualSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualCode.trim()) {
+      toast.error("Please enter a session code");
+      return;
+    }
+    await processQrCode(manualCode);
+  };
+
+  const handleQrScan = (result: string) => {
+    if (result && isScanning) {
+      console.log("QR Code detected:", result);
+      processQrCode(result);
+    }
+  };
+
+  const handleQrError = (error: any) => {
+    console.error("QR Scanner error:", error);
+    // Don't show error toast for every scan failure - it's normal
   };
 
   return (
@@ -153,23 +161,66 @@ export const QrScanner = ({ onScanComplete }: ScannerProps) => {
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Camera Preview */}
+        {/* Manual Input Form */}
+        {showManualInput && (
+          <form onSubmit={handleManualSubmit} className="space-y-3">
+            <div>
+              <label
+                htmlFor="sessionCode"
+                className="block text-sm font-medium mb-2"
+              >
+                Session Code
+              </label>
+              <input
+                id="sessionCode"
+                type="text"
+                value={manualCode}
+                onChange={(e) => setManualCode(e.target.value.toUpperCase())}
+                placeholder="Enter session code"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                autoFocus
+              />
+            </div>
+            <div className="flex space-x-2">
+              <Button type="submit" className="flex-1">
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Submit
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowManualInput(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        )}
+
         {isScanning && hasCamera && (
           <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              className="w-full h-full object-cover"
+            <QrScannerLibrary
+              onScan={(result: any) => handleQrScan(result)}
+              onError={(error) => handleQrError(error)}
+              constraints={{
+                facingMode: "environment",
+              }}
+              scanDelay={500}
+              styles={{
+                container: {
+                  width: "100%",
+                  height: "100%",
+                },
+              }}
             />
-            {/* QR Scanner Overlay */}
-            <div className="absolute inset-0 flex items-center justify-center">
+            {/* Scanner overlay */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-48 h-48 border-2 border-white rounded-lg relative">
-                <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-white"></div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-white"></div>
-                <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-white"></div>
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-white"></div>
+                <div className="absolute -top-1 -left-1 w-6 h-6 border-t-2 border-l-2 border-white"></div>
+                <div className="absolute -top-1 -right-1 w-6 h-6 border-t-2 border-r-2 border-white"></div>
+                <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-2 border-l-2 border-white"></div>
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-2 border-r-2 border-white"></div>
               </div>
             </div>
           </div>
@@ -198,59 +249,53 @@ export const QrScanner = ({ onScanComplete }: ScannerProps) => {
         )}
 
         {/* Camera Status */}
-        {!hasCamera && (
+        {!hasCamera && !showManualInput && (
           <div className="text-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <CameraOff className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
             <p className="text-yellow-800 text-sm">
-              Camera not available. You can enter the session code manually.
+              Camera not available. Please enter the session code manually.
             </p>
           </div>
         )}
 
         {/* Action Buttons */}
-        <div className="flex flex-col space-y-2">
-          {!isScanning ? (
-            <>
-              {hasCamera && (
-                <Button onClick={startCamera} className="w-full">
-                  <Camera className="h-4 w-4 mr-2" />
-                  Start Camera
+        {!showManualInput && (
+          <div className="flex flex-col space-y-2">
+            {!isScanning ? (
+              <>
+                {hasCamera && (
+                  <Button onClick={startCamera} className="w-full">
+                    <Camera className="h-4 w-4 mr-2" />
+                    Start Camera Scanner
+                  </Button>
+                )}
+                <Button
+                  onClick={() => setShowManualInput(true)}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Key className="h-4 w-4 mr-2" />
+                  Enter Code Manually
                 </Button>
-              )}
-              <Button
-                onClick={handleManualCode}
-                variant="outline"
-                className="w-full"
-              >
-                Enter Code Manually
+              </>
+            ) : (
+              <Button onClick={stopCamera} variant="outline" className="w-full">
+                <CameraOff className="h-4 w-4 mr-2" />
+                Stop Scanner
               </Button>
-              {/* Demo button for testing */}
-              <Button
-                onClick={simulateQrScan}
-                variant="secondary"
-                className="w-full"
-              >
-                Test Scan (Demo)
-              </Button>
-            </>
-          ) : (
-            <Button
-              onClick={stopCamera}
-              variant="destructive"
-              className="w-full"
-            >
-              <CameraOff className="h-4 w-4 mr-2" />
-              Stop Camera
-            </Button>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
         {/* Instructions */}
-        <div className="text-xs text-gray-500 space-y-1">
-          <p>• Position the QR code within the frame</p>
-          <p>• Ensure good lighting for better scanning</p>
-          <p>• Hold steady until the code is recognized</p>
-        </div>
+        {!showManualInput && (
+          <div className="text-xs text-gray-500 space-y-1">
+            <p>• Position the QR code within the frame</p>
+            <p>• Ensure good lighting for better scanning</p>
+            <p>• Hold steady until the code is recognized</p>
+            <p>• Or enter the code manually if camera is unavailable</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

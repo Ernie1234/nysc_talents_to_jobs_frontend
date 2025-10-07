@@ -8,6 +8,10 @@ import {
   Target,
   Edit,
   QrCode,
+  AlertCircle,
+  Download,
+  XCircle,
+  CheckCircle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -16,6 +20,9 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetCourseQuery } from "@/features/courses/courseAPI";
 import { useAuth } from "@/hooks/useAuth";
+import { useEnrollment } from "@/hooks/useEnrollment";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useClearance } from "@/hooks/useClearance";
 
 const CourseDetailsPage = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -23,10 +30,25 @@ const CourseDetailsPage = () => {
   const [activeTab, setActiveTab] = useState<
     "overview" | "objectives" | "prerequisites"
   >("overview");
+  const {
+    currentEnrollment,
+    enrollLoading,
+    dropLoading,
+    handleEnroll,
+    handleDrop,
+  } = useEnrollment();
 
-  const { data: courseData, isLoading, error } = useGetCourseQuery(courseId!);
+  const {
+    data: courseData,
+    isLoading,
+    error,
+    refetch,
+  } = useGetCourseQuery(courseId!);
 
   const course = courseData?.data;
+
+  const { eligibility, generatingClearance, handleDownloadClearance } =
+    useClearance(courseId);
 
   if (isLoading) {
     return <CourseDetailsSkeleton />;
@@ -63,6 +85,29 @@ const CourseDetailsPage = () => {
       month: "long",
       day: "numeric",
     });
+  };
+  const enrolledInThisCourse = course.enrolledStudents.some(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (student: any) => student.id === user?.id
+  );
+
+  const canEnrollInThisCourse = !enrolledInThisCourse && !currentEnrollment;
+
+  // Replace the handleEnroll function
+  const handleEnrollClick = async () => {
+    console.log("course id here: ", course.id, course.title);
+    const success = await handleEnroll(course.id, course.title);
+    if (success) {
+      refetch();
+    }
+  };
+
+  // Add handleDrop function
+  const handleDropClick = async () => {
+    const success = await handleDrop(course.id, course.title);
+    if (success) {
+      refetch();
+    }
   };
 
   return (
@@ -195,7 +240,7 @@ const CourseDetailsPage = () => {
                           key={index}
                           className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg"
                         >
-                          <Target className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                          <Target className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                           <p className="text-gray-700">{objective}</p>
                         </div>
                       )
@@ -235,7 +280,56 @@ const CourseDetailsPage = () => {
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Course Info Card */}
+          {!isStaff && (
+            <div className="space-y-4">
+              {currentEnrollment && currentEnrollment._id !== course.id && (
+                <Alert className="bg-yellow-50 border-yellow-200">
+                  <AlertCircle className="h-4 w-4 text-yellow-600" />
+                  <AlertDescription className="text-yellow-800 text-sm">
+                    You are currently enrolled in "{currentEnrollment.title}".
+                    Drop it first to enroll for
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              <div className="flex items-center justify-between">
+                <Badge
+                  variant={
+                    enrolledInThisCourse
+                      ? "default"
+                      : !canEnrollInThisCourse
+                      ? "secondary"
+                      : "outline"
+                  }
+                >
+                  {enrolledInThisCourse
+                    ? "Enrolled"
+                    : !canEnrollInThisCourse
+                    ? "Already Enrolled"
+                    : "Available"}
+                </Badge>
+
+                {enrolledInThisCourse ? (
+                  <Button
+                    onClick={handleDropClick}
+                    disabled={dropLoading}
+                    variant="destructive"
+                    size="sm"
+                  >
+                    {dropLoading ? "Dropping..." : "Drop Course"}
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleEnrollClick}
+                    disabled={!canEnrollInThisCourse || enrollLoading}
+                    size="sm"
+                  >
+                    {enrollLoading ? "Enrolling..." : "Enroll Now"}
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Course Information</CardTitle>
@@ -295,8 +389,8 @@ const CourseDetailsPage = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="text-blue-600 font-semibold text-sm">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <span className="text-green-600 font-semibold text-sm">
                     {course.staffId?.firstName?.charAt(0)}
                     {course.staffId?.lastName?.charAt(0)}
                   </span>
@@ -317,6 +411,66 @@ const CourseDetailsPage = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Performance Clearance Card */}
+          {!isStaff && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Performance Clearance</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {eligibility ? (
+                  <>
+                    <div
+                      className={`flex items-center gap-2 ${
+                        eligibility.eligible ? "text-green-600" : "text-red-600"
+                      }`}
+                    >
+                      {eligibility.eligible ? (
+                        <CheckCircle className="h-5 w-5" />
+                      ) : (
+                        <XCircle className="h-5 w-5" />
+                      )}
+                      <span className="font-medium">{eligibility.message}</span>
+                    </div>
+
+                    <div className="text-sm text-gray-600">
+                      <p>
+                        Your Attendance: {eligibility.attendanceRate.toFixed(1)}
+                        %
+                      </p>
+                      <p>Required: {eligibility.requiredRate}%</p>
+                    </div>
+
+                    {!eligibility.eligible && (
+                      <Alert className="bg-yellow-50 border-yellow-200">
+                        <AlertDescription className="text-yellow-800 text-sm">
+                          You need {eligibility.requiredRate}% attendance to
+                          download the performance clearance certificate.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                    <Button
+                      onClick={() => handleDownloadClearance(course.title)}
+                      disabled={!eligibility.eligible || generatingClearance}
+                      className="w-full"
+                      variant={eligibility.eligible ? "primary" : "outline"}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      {generatingClearance
+                        ? "Generating..."
+                        : "Download Clearance"}
+                    </Button>
+                  </>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-gray-500">Loading eligibility...</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Actions Card */}
           {isStaff && (

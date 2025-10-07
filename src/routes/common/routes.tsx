@@ -23,6 +23,7 @@ import CourseDetailsPage from "@/pages/course/CourseDetailsPage";
 import CourseAttendancePage from "@/pages/course/CourseAttendancePage";
 import GenerateQrPage from "@/pages/course/GenerateQrPage";
 import { UsersTable } from "@/components/admin/UsersTable";
+import { DocumentReview } from "@/components/admin/DocumentReview";
 
 export const publicRoutePaths = [
   {
@@ -89,6 +90,10 @@ export const protectedRoutePaths = [
   {
     path: PROTECTED_ROUTES.APPROVE_INTERNS,
     element: <UsersTable />,
+  },
+  {
+    path: PROTECTED_ROUTES.DOCUMENT_REVIEW,
+    element: <DocumentReview />,
   },
   {
     path: PROTECTED_ROUTES.FIND_WORK,

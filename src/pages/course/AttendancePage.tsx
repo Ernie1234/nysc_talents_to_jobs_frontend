@@ -1,4 +1,3 @@
-// pages/attendance-scanner.tsx
 import { useState } from "react";
 import { QrCode, Calendar, Clock, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
-import { QrScanner } from "@/components/dashboard/courses/ScanQR";
+import { ScannerComponent } from "@/components/dashboard/courses/ScanQR";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const AttendanceScannerPage = () => {
@@ -34,8 +33,7 @@ const AttendanceScannerPage = () => {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
-      {/* Header */}
+    <div className="container mx-auto py-8 px-4">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Attendance Scanner
@@ -62,12 +60,10 @@ const AttendanceScannerPage = () => {
         </TabsList>
 
         <TabsContent value="scanner" className="space-y-6">
-          {/* Scanner Section */}
           <div className="flex justify-center">
-            <QrScanner onScanComplete={() => setActiveTab("history")} />
+            <ScannerComponent onScanComplete={() => setActiveTab("history")} />
           </div>
 
-          {/* Instructions */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">How to use the scanner</CardTitle>
@@ -123,9 +119,6 @@ const AttendanceScannerPage = () => {
                   Go to Scanner
                 </Button>
               </div>
-
-              {/* You can add actual attendance history here later */}
-              {/* {attendanceRecords.map((record) => ( ... ))} */}
             </CardContent>
           </Card>
         </TabsContent>
